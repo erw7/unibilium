@@ -536,6 +536,15 @@ enum unibi_string {
     unibi_string_end_
 };
 
+enum unibi_source_type {
+  unibi_env,
+  unibi_fp,
+  unibi_fd,
+  unibi_file,
+  unibi_mem,
+  unibi_terminal
+};
+
 typedef struct unibi_term unibi_term;
 
 unibi_term *unibi_dummy(void);
@@ -626,5 +635,20 @@ void unibi_format(
 );
 
 size_t unibi_run(const char *, unibi_var_t [9], char *, size_t);
+
+typedef struct {
+    enum unibi_source_type type;
+    union {
+      int fd;
+      void *ptr;
+      struct {
+        const char *mem;
+        size_t size;
+      } mem;
+    } src;
+} unibi_src_t;
+
+int unibi_init(unibi_src_t);
+unibi_term *unibi_get(void);
 
 #endif /* GUARD_UNIBILIUM_H_ */

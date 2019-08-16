@@ -81,6 +81,8 @@ along with unibilium.  If not, see <http://www.gnu.org/licenses/>.
     } \
     static void DYNARR(W, init)(DYNARR_T(W) *)
 
+static unibi_term *stored_ut = NULL;
+
 static size_t next_alloc(size_t n) {
     return n * 3 / 2 + 5;
 }
@@ -109,6 +111,7 @@ struct unibi_term {
     DYNARR_T(str) ext_strs;
     DYNARR_T(str) ext_names;
     char *ext_alloc;
+    int ref_count;
 };
 
 #define ASSERT_EXT_NAMES(X) assert((X)->ext_names.used == (X)->ext_bools.used + (X)->ext_nums.used + (X)->ext_strs.used)
@@ -157,6 +160,7 @@ unibi_term *unibi_dummy(void) {
     if (!(t = malloc(sizeof *t))) {
         return NULL;
     }
+    t->ref_count = 0;
     if (!(mem = malloc(2 * sizeof *t->aliases))) {
         free(t);
         return NULL;
@@ -228,6 +232,7 @@ unibi_term *unibi_from_mem(const char *p, size_t n) {
     if (!(t = malloc(sizeof *t))) {
         return NULL;
     }
+    t->ref_count = 0;
     {
         void *mem;
         if (!(mem = malloc(namco * sizeof *t->aliases + tablsz + namlen + 1))) {
@@ -445,17 +450,23 @@ unibi_term *unibi_from_mem(const char *p, size_t n) {
 #undef DEL_FAIL_IF
 
 void unibi_destroy(unibi_term *t) {
-    DYNARR(bool, free)(&t->ext_bools);
-    DYNARR(num, free)(&t->ext_nums);
-    DYNARR(str, free)(&t->ext_strs);
-    DYNARR(str, free)(&t->ext_names);
-    free(t->ext_alloc);
-    t->ext_alloc = (char *)">_>";
+    t->ref_count--;
+    if (t->ref_count <= 0) {
+        if (t->ref_count == 0) {
+            stored_ut = NULL;
+        }
+        DYNARR(bool, free)(&t->ext_bools);
+        DYNARR(num, free)(&t->ext_nums);
+        DYNARR(str, free)(&t->ext_strs);
+        DYNARR(str, free)(&t->ext_names);
+        free(t->ext_alloc);
+        t->ext_alloc = (char *)">_>";
 
-    t->aliases = NULL;
-    free(t->alloc);
-    t->alloc = (char *)":-O";
-    free(t);
+        t->aliases = NULL;
+        free(t->alloc);
+        t->alloc = (char *)":-O";
+        free(t);
+    }
 }
 
 static void put_ushort16(char *p, unsigned short n) {
@@ -1414,4 +1425,41 @@ size_t unibi_run(const char *fmt, unibi_var_t param[9], char *p, size_t n) {
 
     unibi_format(vars, vars + 26, fmt, param, out, &ctx, NULL, NULL);
     return ctx.w;
+}
+
+int unibi_init(unibi_src_t src) {
+    if (stored_ut  != NULL) {
+        return 0;
+    }
+    unibi_term *ut = NULL;
+    switch(src.type) {
+        case unibi_env:
+            ut = unibi_from_env();
+            break;
+        case unibi_fp:
+            ut = unibi_from_fp((FILE *)src.src.ptr);
+            break;
+        case unibi_fd:
+            ut = unibi_from_fd(src.src.fd);
+            break;
+        case unibi_file:
+            ut = unibi_from_file((const char *)src.src.ptr);
+            break;
+        case unibi_mem:
+            ut = unibi_from_mem(src.src.mem.mem, src.src.mem.size);
+            break;
+        case unibi_terminal:
+            ut = unibi_from_term((const char *)src.src.ptr);
+            break;
+    }
+    if (ut) {
+        ut->ref_count++;
+        stored_ut = ut;
+        return 1;
+    }
+    return 0;
+}
+
+unibi_term *unibi_get(void) {
+  return stored_ut;
 }
