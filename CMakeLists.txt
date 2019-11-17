@@ -1,4 +1,17 @@
 cmake_minimum_required(VERSION 2.8.12)
+
+find_program(CCACHE_EXE ccache)
+if(CCACHE_EXE)
+  option(CCACHE_ENABLE "Use ccache, if available" ON)
+else()
+  option(CCACHE_ENABLE "Use ccache, if available" OFF)
+endif()
+
+if(CCACHE_EXE AND CCACHE_ENABLE)
+  message(STATUS "Enable ccache")
+  set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_EXE}")
+endif()
+
 project(unibilium LANGUAGES C)
 
 file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/*.c)
