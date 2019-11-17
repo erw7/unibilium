@@ -627,4 +627,7 @@ void unibi_format(
 
 size_t unibi_run(const char *, unibi_var_t [9], char *, size_t);
 
+typedef unibi_term *Unibi_Fallback_Func(const char*);
+void unibi_set_fallback(Unibi_Fallback_Func *);
+
 #endif /* GUARD_UNIBILIUM_H_ */

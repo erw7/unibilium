@@ -44,6 +44,12 @@ enum {MAX_BUF = 4096};
 
 const char *const unibi_terminfo_dirs = TERMINFO_DIRS;
 
+static Unibi_Fallback_Func *fallback_func = NULL;
+
+void unibi_set_fallback(Unibi_Fallback_Func *func) {
+  fallback_func = func;
+}
+
 unibi_term *unibi_from_fp(FILE *fp) {
     char buf[MAX_BUF];
     size_t n, r;
@@ -180,9 +186,10 @@ unibi_term *unibi_from_term(const char *term) {
     unibi_term *ut;
     const char *env;
 
-    assert(term != NULL);
-
     if (term[0] == '\0' || term[0] == '.' || strchr(term, '/')) {
+        if (fallback_func) {
+            return fallback_func(term);
+        }
         errno = EINVAL;
         return NULL;
     }
@@ -202,15 +209,26 @@ unibi_term *unibi_from_term(const char *term) {
     }
 
     if ((env = getenv("TERMINFO_DIRS"))) {
-        return from_dirs(env, term);
+        ut = from_dirs(env, term);
+        if (ut) {
+            return ut;
+        }
+    } else {
+        ut = from_dirs(unibi_terminfo_dirs, term);
+        if (ut) {
+            return ut;
+        }
     }
 
-    return from_dirs(unibi_terminfo_dirs, term);
+    return fallback_func ? fallback_func(term) : NULL;
 }
 
 unibi_term *unibi_from_env(void) {
     const char *term = getenv("TERM");
     if (!term) {
+        if (fallback_func) {
+            return fallback_func(term);
+        }
         errno = ENOENT;
         return NULL;
     }
