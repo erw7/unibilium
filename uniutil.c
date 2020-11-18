@@ -35,6 +35,14 @@ along with unibilium.  If not, see <http://www.gnu.org/licenses/>.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#ifdef USE_HASHED_DB
+# include <db.h>
+# ifdef DB_VERSION_MAJOR
+#  define HASHED_DB_API DB_VERSION_MAJOR
+# else
+#  define HASHED_DB_API 1
+# endif
+#endif
 
 #ifndef TERMINFO_DIRS
 #error "internal error: TERMINFO_DIRS is not defined"
@@ -79,6 +87,84 @@ unibi_term *unibi_from_fd(int fd) {
     return unibi_from_mem(buf, n);
 }
 
+#ifdef USE_HASHED_DB
+static DB * unibi_db_open(const char *path) {
+  DB *dbp = NULL;
+
+#if HASHED_DB_API >= 4
+  if (db_create(&dbp, NULL, 0) != 0
+      || dbp->open(dbp, NULL, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
+    dbp = NULL;
+#elif HASHED_DB_API >= 3
+  if (db_create(&dbp, NULL, 0) != 0
+      || dbp->open(dbp, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
+    dbp = NULL;
+#elif HASHED_DB_API >= 2
+  if (db_open(path, DB_HASH, DB_RDONLY, 0644,
+              (DB_ENV *)NULL, (DB_INFO *)NULL, &dbp) != 0)
+    dbp = NULL;
+#else
+  dbp = dbopen(path, O_RDONLY, 0644, DB_HASH, NULL);
+#endif
+
+  return dbp;
+}
+
+static void unibi_db_close(DB *dbp) {
+#if HASHED_DB_API >= 2
+  dbp->close(dbp, 0);
+#else
+  dbp->close(dbp);
+#endif
+}
+
+static int unibi_db_get(DB *dbp, DBT *key, DBT *data) {
+#if HASHED_DB_API >= 2
+  return dbp->get(dbp, NULL, key, data, 0);
+#else
+  return dbp->get(dbp, key, data, 0);
+#endif
+}
+
+unibi_term *unibi_from_db(const char *file, const char *term) {
+  DB *dbp;
+  unibi_term *ut = NULL;
+
+  if (file == NULL || file[0] == '\0'|| term == NULL || term[0] == '\0') {
+    return ut;
+  }
+
+  if ((dbp = unibi_db_open(file)) != NULL) {
+    int reccnt = 0;
+    char *save = strdup(term);
+    DBT key = { 0 };
+    DBT data = { 0 };
+
+    key.data = save;
+    key.size = strlen(term);
+
+    while (unibi_db_get(dbp, &key, &data) == 0) {
+      char *buf = (char *)data.data;
+      int n = (int)data.size - 1;
+
+      if (*buf++ == 0) {
+        ut = unibi_from_mem(buf, n);
+        break;
+      }
+      if (++reccnt >= 3) {
+        break;
+      }
+      key.data = buf;
+      key.size = n;
+    }
+
+    free(save);
+    unibi_db_close(dbp);
+  }
+
+  return ut;
+}
+#else
 unibi_term *unibi_from_file(const char *file) {
     int fd;
     unibi_term *ut;
@@ -91,6 +177,7 @@ unibi_term *unibi_from_file(const char *file) {
     close(fd);
     return ut;
 }
+#endif
 
 static int add_overflowed(size_t *dst, size_t src) {
     *dst += src;
@@ -110,9 +197,14 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
     if (
         add_overflowed(&path_size, dir_len) ||
         add_overflowed(&path_size, mid_len) ||
+#ifdef USE_HASHED_DB
+        add_overflowed(&path_size, 1 + 3 + 1)
+                                /* /   .db \0 */
+#else
         add_overflowed(&path_size, term_len) ||
         add_overflowed(&path_size, 1 + 2           + 1 + 1)
                                 /* /   (%c | %02x)   /   \0 */
+#endif
     ) {
         /* overflow */
         errno = ENOMEM;
@@ -123,6 +215,11 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
     }
 
     memcpy(path, dir_begin, dir_len);
+#ifdef USE_HASHED_DB
+    sprintf(path + dir_len, "%s"             "%s.db",
+                             mid ? "/" : "", mid ? mid : "");
+    ut = unibi_from_db(path, term);
+#else
     sprintf(path + dir_len, "/" "%s"            "%s"             "%c" "/" "%s",
                                  mid ? mid : "", mid ? "/" : "",  term[0], term);
 
@@ -135,6 +232,7 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
                                                term);
         ut = unibi_from_file(path);
     }
+#endif
     free(path);
     return ut;
 }

@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 2.8.12)
 project(unibilium LANGUAGES C)
 
+option(USE_HASHED_DB "Use hased database instead of directory/tree" OFF)
+
 file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/*.c)
 add_library(unibilium ${SRC_FILES})
 set_target_properties(unibilium PROPERTIES PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/unibilium.h
   VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
+
+if(USE_HASHED_DB)
+  add_compile_definitions(USE_HASHED_DB)
+endif()
 
 if(NOT WIN32)
   execute_process(COMMAND sh -c "ncursesw6-config --terminfo-dirs 2>/dev/null || \

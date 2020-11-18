@@ -12,6 +12,10 @@ CFLAGS?=-O2
 
 CFLAGS_DEBUG=
 
+ifdef USE_HASHED_DB
+	CFLAGS += -DUSE_HASHED_DB
+endif
+
 PACKAGE=unibilium
 
 PKG_MAJOR=2

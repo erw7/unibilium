@@ -561,7 +561,11 @@ void        unibi_set_str(unibi_term *, enum unibi_string, const char *);
 
 unibi_term *unibi_from_fp(FILE *);
 unibi_term *unibi_from_fd(int);
+#ifdef USE_HASHED_DB
+unibi_term *unibi_from_db(const char *, const char *);
+#else
 unibi_term *unibi_from_file(const char *);
+#endif
 unibi_term *unibi_from_term(const char *);
 unibi_term *unibi_from_env(void);
 

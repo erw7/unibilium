@@ -11,6 +11,9 @@ int main(void) {
     int e;
     unibi_term *dt;
 
+#ifdef USE_HASHED_DB
+    return 0;
+#else
     setup();
 
     dt = unibi_dummy();
@@ -724,6 +727,7 @@ int main(void) {
     ok(1, "dummy object destroyed");
 
     return 0;
+#endif
 }
 
 static void setup(void) {
