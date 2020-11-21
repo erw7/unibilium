@@ -11,7 +11,7 @@ int main(void) {
     int e;
     unibi_term *dt;
 
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
     return 0;
 #else
     setup();

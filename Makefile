@@ -12,8 +12,12 @@ CFLAGS?=-O2
 
 CFLAGS_DEBUG=
 
-ifdef USE_HASHED_DB
+ifeq ($(USE_HASHED_DB), 1)
 	CFLAGS += -DUSE_HASHED_DB
+endif
+
+ifeq ($(USE_NETBSD_CURSES), 1)
+	CFLAGS += -DUSE_NETBSD_CURSES
 endif
 
 PACKAGE=unibilium

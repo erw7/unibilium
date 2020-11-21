@@ -2,14 +2,23 @@ cmake_minimum_required(VERSION 2.8.12)
 project(unibilium LANGUAGES C)
 
 option(USE_HASHED_DB "Use hased database instead of directory/tree" OFF)
+option(USE_HASHED_DB "Use NetBSD curses instead of ncurses" OFF)
 
 file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/*.c)
 add_library(unibilium ${SRC_FILES})
 set_target_properties(unibilium PROPERTIES PUBLIC_HEADER ${PROJECT_SOURCE_DIR}/unibilium.h
   VERSION "${VERSION_MAJOR}.${VERSION_MINOR}")
 
+if (USE_HASHED_DB AND USE_NETBSD_CURSES)
+  message(FATAL_ERROR "Both USE_NETBSD_CURSES and USE_HASHED_DB cannot be specified.")
+endif()
+
 if(USE_HASHED_DB)
   add_compile_definitions(USE_HASHED_DB)
+endif()
+
+if(USE_NETBSD_CURSES)
+  add_compile_definitions(USE_NETBSD_CURSES)
 endif()
 
 if(NOT WIN32)

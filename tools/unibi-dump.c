@@ -62,14 +62,14 @@ static void print_str_esc(const char *s) {
     }
 }
 
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
 static unibi_term *get_term(const char *s, const char *t) {
 #else
 static unibi_term *get_term(const char *s) {
 #endif
     unibi_term *ut;
     if (s) {
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
         ut = unibi_from_db(s, t);
 #else
         ut = unibi_from_file(s);
@@ -88,7 +88,7 @@ static unibi_term *get_term(const char *s) {
 }
 
 int main(int argc, char **argv) {
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
     unibi_term *const ut = get_term(argc > 2 ? argv[1] : NULL,
                                     argc > 2 ? argv[2] : NULL);
 #else

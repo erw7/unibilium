@@ -43,6 +43,9 @@ along with unibilium.  If not, see <http://www.gnu.org/licenses/>.
 #  define HASHED_DB_API 1
 # endif
 #endif
+#ifdef USE_NETBSD_CURSES
+# include <cdbr.h>
+#endif
 
 #ifndef TERMINFO_DIRS
 #error "internal error: TERMINFO_DIRS is not defined"
@@ -164,6 +167,52 @@ unibi_term *unibi_from_db(const char *file, const char *term) {
 
   return ut;
 }
+#elif defined(USE_NETBSD_CURSES)
+static struct cdbr *unibi_db_open(const char *path) {
+  return cdbr_open(path, CDBR_DEFAULT);
+}
+
+static void unibi_db_close(struct cdbr *dbp) {
+  cdbr_close(dbp);
+}
+
+static int unibi_db_get(struct cdbr *dbp, uint32_t index,
+                        const void **data, size_t *len) {
+  return cdbr_get(dbp, index, data, len);
+}
+
+static int unibi_db_find(struct cdbr *dbp, const void *key, size_t keylen,
+                         const void **data, size_t *datalen) {
+  return cdbr_find(dbp, key, keylen, data, datalen);
+}
+
+unibi_term *unibi_from_db(const char *file, const char *term) {
+  struct cdbr *dbp;
+  unibi_term *ut = NULL;
+
+  if (file == NULL || file[0] == '\0'|| term == NULL || term[0] == '\0') {
+    return ut;
+  }
+
+  if ((dbp = unibi_db_open(file)) != NULL) {
+    char *data;
+    size_t datalen;
+    if (unibi_db_find(dbp, (void *)term, strlen(term) + 1,
+                  (void *)&data, &datalen) == 0) {
+      if (datalen != 0 && data[0] == 2) {
+        uint32_t idx = data[1] + (data[2] << 16);
+        if (unibi_db_get(dbp, idx, (void *)&data, &datalen) != 0) {
+          unibi_db_close(dbp);
+          return NULL;
+        }
+      }
+      ut = unibi_from_mem(data, datalen);
+    }
+    unibi_db_close(dbp);
+  }
+
+  return ut;
+}
 #else
 unibi_term *unibi_from_file(const char *file) {
     int fd;
@@ -197,9 +246,12 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
     if (
         add_overflowed(&path_size, dir_len) ||
         add_overflowed(&path_size, mid_len) ||
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB)
         add_overflowed(&path_size, 1 + 3 + 1)
                                 /* /   .db \0 */
+#elif defined(USE_NEBBSD_CURSES)
+        add_overflowed(&path_size, 1 + 4 + 1)
+                                /* /   .cdb \0 */
 #else
         add_overflowed(&path_size, term_len) ||
         add_overflowed(&path_size, 1 + 2           + 1 + 1)
@@ -215,8 +267,12 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
     }
 
     memcpy(path, dir_begin, dir_len);
-#ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
+# ifdef USE_HASHED_DB
     sprintf(path + dir_len, "%s"             "%s.db",
+#else
+    sprintf(path + dir_len, "%s"             "%s.cdb",
+#endif
                              mid ? "/" : "", mid ? mid : "");
     ut = unibi_from_db(path, term);
 #else

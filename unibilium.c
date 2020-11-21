@@ -111,6 +111,481 @@ struct unibi_term {
     char *ext_alloc;
 };
 
+#ifdef USE_NETBSD_CURSES
+static const unsigned short nc_bools2nbc[] = {
+    0  , // bw
+    1  , // am
+    28 , // bce
+    27 , // ccc
+    3  , // xhp
+    30 , // xhpa
+    35 , // cpix
+    31 , // crxm
+    17 , // xt
+    4  , // xenl
+    5  , // eo
+    6  , // gn
+    7  , // hc
+    23 , // chts
+    8  , // km
+    32 , // daisy
+    9  , // hs
+    29 , // hls
+    10 , // in_key
+    36 , // lpix
+    11 , // da
+    12 , // db
+    13 , // mir
+    14 , // msgr
+    21 , // nxon
+    2  , // xsb
+    25 , // npc
+    26 , // ndscr
+    24 , // nrrmc
+    15 , // os
+    22 , // mc5i
+    33 , // xvpa
+    34 , // sam
+    16 , // eslok
+    18 , // hz
+    19 , // ul
+    20 , // xon
+};
+
+static const unsigned short nc_nums2nbc[] = {
+    31 , // bitwin
+    32 , // bitype
+    16 , // bufsz
+    30 , // btns
+    0  , // cols
+    18 , // spinh
+    17 , // spinv
+    1  , // it
+    9  , // lh
+    10 , // lw
+    2  , // lines
+    3  , // lm
+    11 , // ma
+    4  , // xmc
+    13 , // colors
+    19 , // maddr
+    20 , // mjump
+    14 , // pairs
+    12 , // wnum
+    21 , // mcs
+    22 , // mls
+    15 , // ncv
+    8  , // nlab
+    23 , // npins
+    24 , // orc
+    25 , // orl
+    26 , // orhi
+    27 , // orvi
+    5  , // pb
+    28 , // cps
+    6  , // vt
+    29 , // widcs
+    7  , // wsl
+};
+
+static const unsigned short nc_strs2nbc[] = {
+    146, // acsc
+    385, // scesa
+    0  , // cbt
+    1  , // bel
+    372, // bicr
+    371, // binel
+    370, // birep
+    2  , // cr
+    304, // cpi
+    305, // lpi
+    306, // chr
+    307, // cvr
+    3  , // csr
+    145, // rmp
+    354, // csnm
+    4  , // tbc
+    270, // mgc
+    5  , // clear
+    269, // el1
+    6  , // el
+    7  , // ed
+    363, // csin
+    373, // colornm
+    8  , // hpa
+    9  , // cmdch
+    277, // cwin
+    10 , // cup
+    11 , // cud1
+    12 , // home
+    13 , // civis
+    14 , // cub1
+    15 , // mrcup
+    16 , // cnorm
+    17 , // cuf1
+    18 , // ll
+    19 , // cuu1
+    20 , // cvvis
+    374, // defbi
+    308, // defc
+    21 , // dch1
+    22 , // dl1
+    362, // devt
+    280, // dial
+    23 , // dsl
+    275, // dclk
+    378, // dispc
+    24 , // hd
+    155, // enacs
+    375, // endbi
+    25 , // smacs
+    151, // smam
+    26 , // blink
+    27 , // bold
+    28 , // smcup
+    29 , // smdc
+    30 , // dim
+    309, // swidm
+    310, // sdrfq
+    386, // ehhlm
+    31 , // smir
+    311, // sitm
+    387, // elhlm
+    312, // slm
+    388, // elohlm
+    313, // smicm
+    314, // snlq
+    315, // snrmq
+    379, // smpch
+    33 , // prot
+    34 , // rev
+    389, // erhlm
+    381, // smsc
+    32 , // invis
+    316, // sshm
+    35 , // smso
+    317, // ssubm
+    318, // ssupm
+    390, // ethlm
+    36 , // smul
+    319, // sum
+    391, // evhlm
+    149, // smxon
+    37 , // ech
+    38 , // rmacs
+    152, // rmam
+    39 , // sgr0
+    40 , // rmcup
+    41 , // rmdc
+    320, // rwidm
+    42 , // rmir
+    321, // ritm
+    322, // rlm
+    323, // rmicm
+    380, // rmpch
+    382, // rmsc
+    324, // rshm
+    43 , // rmso
+    325, // rsubm
+    326, // rsupm
+    44 , // rmul
+    327, // rum
+    150, // rmxon
+    285, // pause
+    284, // hook
+    45 , // flash
+    46 , // ff
+    47 , // fsl
+    358, // getm
+    278, // wingo
+    279, // hup
+    48 , // is1
+    49 , // is2
+    50 , // is3
+    51 , // if_key
+    138, // iprog
+    299, // initc
+    300, // initp
+    52 , // ich1
+    53 , // il1
+    54 , // ip
+    139, // ka1
+    140, // ka3
+    141, // kb2
+    55 , // kbs
+    158, // kbeg
+    148, // kcbt
+    142, // kc1
+    143, // kc3
+    159, // kcan
+    56 , // ktbc
+    57 , // kclr
+    160, // kclo
+    161, // kcmd
+    162, // kcpy
+    163, // kcrt
+    58 , // kctab
+    59 , // kdch1
+    60 , // kdl1
+    61 , // kcud1
+    62 , // krmir
+    164, // kend
+    165, // kent
+    63 , // kel
+    64 , // ked
+    166, // kext
+    65 , // kf0
+    66 , // kf1
+    68 , // kf2
+    69 , // kf3
+    70 , // kf4
+    71 , // kf5
+    72 , // kf6
+    73 , // kf7
+    74 , // kf8
+    75 , // kf9
+    67 , // kf10
+    216, // kf11
+    217, // kf12
+    218, // kf13
+    219, // kf14
+    220, // kf15
+    221, // kf16
+    222, // kf17
+    223, // kf18
+    224, // kf19
+    225, // kf20
+    226, // kf21
+    227, // kf22
+    228, // kf23
+    229, // kf24
+    230, // kf25
+    231, // kf26
+    232, // kf27
+    233, // kf28
+    234, // kf29
+    235, // kf30
+    236, // kf31
+    237, // kf32
+    238, // kf33
+    239, // kf34
+    240, // kf35
+    241, // kf36
+    242, // kf37
+    243, // kf38
+    244, // kf39
+    245, // kf40
+    246, // kf41
+    247, // kf42
+    248, // kf43
+    249, // kf44
+    250, // kf45
+    251, // kf46
+    252, // kf47
+    253, // kf48
+    254, // kf49
+    255, // kf50
+    256, // kf51
+    257, // kf52
+    258, // kf53
+    259, // kf54
+    260, // kf55
+    261, // kf56
+    262, // kf57
+    263, // kf58
+    264, // kf59
+    265, // kf60
+    266, // kf61
+    267, // kf62
+    268, // kf63
+    167, // kfnd
+    168, // khlp
+    76 , // khome
+    77 , // kich1
+    78 , // kil1
+    79 , // kcub1
+    80 , // kll
+    169, // kmrk
+    170, // kmsg
+    355, // kmous
+    171, // kmov
+    172, // knxt
+    81 , // knp
+    173, // kopn
+    174, // kopt
+    82 , // kpp
+    175, // kprv
+    176, // kprt
+    177, // krdo
+    178, // kref
+    179, // krfr
+    180, // krpl
+    181, // krst
+    182, // kres
+    83 , // kcuf1
+    183, // ksav
+    186, // kBEG
+    187, // kCAN
+    188, // kCMD
+    189, // kCPY
+    190, // kCRT
+    191, // kDC
+    192, // kDL
+    193, // kslt
+    194, // kEND
+    195, // kEOL
+    196, // kEXT
+    84 , // kind
+    197, // kFND
+    198, // kHLP
+    199, // kHOM
+    200, // kIC
+    201, // kLFT
+    202, // kMSG
+    203, // kMOV
+    204, // kNXT
+    205, // kOPT
+    206, // kPRV
+    207, // kPRT
+    85 , // kri
+    208, // kRDO
+    209, // kRPL
+    210, // kRIT
+    211, // kRES
+    212, // kSAV
+    213, // kSPD
+    86 , // khts
+    214, // kUND
+    184, // kspd
+    185, // kund
+    87 , // kcuu1
+    88 , // rmkx
+    89 , // smkx
+    90 , // lf0
+    91 , // lf1
+    93 , // lf2
+    94 , // lf3
+    95 , // lf4
+    96 , // lf5
+    97 , // lf6
+    98 , // lf7
+    99 , // lf8
+    100, // lf9
+    92 , // lf10
+    273, // fln
+    157, // rmln
+    156, // smln
+    101, // rmm
+    102, // smm
+    328, // mhpa
+    329, // mcud1
+    330, // mcub1
+    331, // mcuf1
+    332, // mvpa
+    333, // mcuu1
+    356, // minfo
+    103, // nel
+    334, // porder
+    298, // oc
+    297, // op
+    104, // pad
+    105, // dch
+    106, // dl
+    107, // cud
+    335, // mcud
+    108, // ich
+    109, // indn
+    110, // il
+    111, // cub
+    336, // mcub
+    112, // cuf
+    337, // mcuf
+    113, // rin
+    114, // cuu
+    338, // mcuu
+    383, // pctrm
+    115, // pfkey
+    116, // pfloc
+    361, // pfxl
+    117, // pfx
+    147, // pln
+    118, // mc0
+    144, // mc5p
+    119, // mc4
+    120, // mc5
+    283, // pulse
+    281, // qdial
+    276, // rmclk
+    121, // rep
+    215, // rfi
+    357, // reqmp
+    122, // rs1
+    123, // rs2
+    124, // rs3
+    125, // rf
+    126, // rc
+    127, // vpa
+    128, // sc
+    384, // scesc
+    129, // ind
+    130, // ri
+    339, // scs
+    364, // s0ds
+    365, // s1ds
+    366, // s2ds
+    367, // s3ds
+    392, // sgr1
+    360, // setab
+    359, // setaf
+    131, // sgr
+    303, // setb
+    340, // smgb
+    341, // smgbp
+    274, // sclk
+    376, // setcolor
+    301, // scp
+    302, // setf
+    271, // smgl
+    342, // smglp
+    368, // smglr
+    377, // slines
+    393, // slength
+    272, // smgr
+    343, // smgrp
+    132, // hts
+    369, // smgtb
+    344, // smgt
+    345, // smgtp
+    133, // wind
+    346, // sbim
+    347, // scsd
+    348, // rbim
+    349, // rcsd
+    350, // subcs
+    351, // supcs
+    134, // ht
+    352, // docr
+    135, // tsl
+    282, // tone
+    287, // u0
+    288, // u1
+    289, // u2
+    290, // u3
+    291, // u4
+    292, // u5
+    293, // u6
+    294, // u7
+    295, // u8
+    296, // u9
+    136, // uc
+    137, // hu
+    286, // wait
+    154, // xoffc
+    153, // xonc
+    353, // zerom
+};
+#endif
+
 #define ASSERT_EXT_NAMES(X) assert((X)->ext_names.used == (X)->ext_bools.used + (X)->ext_nums.used + (X)->ext_strs.used)
 
 
@@ -199,6 +674,312 @@ static size_t size_max(size_t a, size_t b) {
 #define FAIL_IF(c, e) FAIL_IF_(c, e, (void)0)
 #define DEL_FAIL_IF(c, e, x) FAIL_IF_(c, e, unibi_destroy(x))
 
+#ifdef USE_NETBSD_CURSES
+unibi_term *unibi_from_mem(const char *p, size_t n) {
+#define HANDLE_BYTE(p, v, r, t) \
+  do { \
+    DEL_FAIL_IF(r < sizeof(*p), EFAULT, t); \
+    v = *p++; \
+    r -= sizeof(*p); \
+  } while (0)
+#define HANDLE_USHOTR16(p, v, r, t) \
+  do { \
+    DEL_FAIL_IF(r < sizeof(unsigned short), EFAULT, t); \
+    v = get_ushort16(p); \
+    p += sizeof(unsigned short); \
+    r -= sizeof(unsigned short); \
+  } while (0)
+#define HANDLE_STR1(p, v, r, t) \
+  do { \
+    unsigned short l; \
+    HANDLE_USHOTR16(p, l, r, t); \
+    v += l; \
+    DEL_FAIL_IF(r < l, EFAULT, t); \
+    p += l; \
+    r -= l; \
+  } while (0)
+#define HANDLE_STR2(p, d, v, r, t) \
+  do { \
+    unsigned short l; \
+    HANDLE_USHOTR16(p, l, r, t); \
+    memcpy(d, p, l); \
+    DEL_FAIL_IF(r < l, EFAULT, t); \
+    p += l; \
+    r -= l; \
+    v = l; \
+  } while (0)
+#define FOR_EACH(p, r, t, code1, code2) \
+  do { \
+    unsigned short n; \
+    HANDLE_USHOTR16(p, n, r, t); \
+    if (n != 0) { \
+      code1 \
+      HANDLE_USHOTR16(p, n, r, t); \
+      for (; n != 0; n--) { \
+        code2 \
+      } \
+    } \
+  } while (0)
+    unibi_term *t = NULL;
+    const char *pos, *strs_pos, *ext_pos;
+    unsigned short namlen, tablsz, round;
+    unsigned short extboollen, extnumlen, extstrslen, ext_strssz, ext_namessz;
+    unsigned short ext_bools_namessz, ext_nums_namessz, ext_strs_namessz;
+    char *strp, *namp;
+    size_t namco, remain;
+
+    strs_pos = ext_pos = NULL;
+    strp = namp = NULL;
+    namlen = 0;
+    tablsz = 0;
+    namco = 0;
+    extboollen = extnumlen = extstrslen = 0;
+    ext_strssz = ext_namessz = 0;
+    ext_bools_namessz = ext_nums_namessz = ext_strs_namessz = 0;
+
+    FAIL_IF(*p++ != 1, EINVAL);
+    n--;
+
+    FAIL_IF(!(t = malloc(sizeof *t)), ENOMEM);
+    t->alloc = NULL;
+    memset(t->bools, '\0', sizeof t->bools);
+    fill_1(t->nums, COUNTOF(t->nums));
+    fill_null(t->strs, COUNTOF(t->strs));
+    DYNARR(bool, init)(&t->ext_bools);
+    DYNARR(num, init)(&t->ext_nums);
+    DYNARR(str, init)(&t->ext_strs);
+    DYNARR(str, init)(&t->ext_names);
+    t->ext_alloc = NULL;
+
+    for (round = 0; round < 2; round++){
+      size_t len;
+      size_t k = 0;
+
+      pos = p;
+      remain = n;
+
+      if (!round) {
+        HANDLE_STR1(pos, namlen, remain, t);
+        namco++;
+      } else {
+        void *mem;
+        DEL_FAIL_IF(
+            !(mem = malloc(namco * sizeof *t->aliases + tablsz + namlen + 1)),
+            ENOMEM, t);
+        t->alloc = mem;
+        t->aliases = mem;
+
+        strp = t->alloc + namco * sizeof *t->aliases;
+        namp = strp + tablsz;
+
+        HANDLE_STR2(pos, namp, len, remain, t);
+        t->name = namp;
+        namp += len;
+      }
+
+      // aliases
+      if (!round) {
+        len = 0;
+        HANDLE_STR1(pos, len, remain, t);
+        if (len != 0) {
+          namco = mcount(pos - len, len, '|') + 1;
+          namlen += len;
+        }
+      } else {
+        assert(namp != NULL);
+        HANDLE_STR2(pos, namp, len, remain, t);
+        if (len != 0) {
+          char *start, *end;
+          start = namp;
+          while ((end = strchr(start, '|'))) {
+            *end = '\0';
+            t->aliases[k++] = start;
+            start = end + 1;
+          }
+          t->aliases[k++] = start;
+          namp += len;
+        }
+      }
+
+      // description
+      if (!round) {
+        len = 0;
+        HANDLE_STR1(pos, len, remain, t);
+        namco += len ? 1 : 0;
+        namlen += len;
+      } else {
+        assert(namp != NULL);
+        HANDLE_STR2(pos, namp, len, remain, t);
+        t->aliases[k] = namp;
+      }
+
+      if(!round) {
+        namco++;
+      } else {
+        assert(k < namco);
+        t->aliases[k] = NULL;
+      }
+
+      if (!round) {
+        FOR_EACH(pos, remain, t, {}, {
+            unsigned short idx;
+            char flag;
+            HANDLE_USHOTR16(pos, idx, remain, t);
+            HANDLE_BYTE(pos, flag, remain, t);
+            assert(idx < sizeof(nc_bools2nbc) / sizeof(nc_bools2nbc[0]));
+            t->bools[nc_bools2nbc[idx] / CHAR_BIT]  |= flag << idx % CHAR_BIT;
+        });
+
+        FOR_EACH(pos, remain, t, {}, {
+            unsigned short idx;
+            HANDLE_USHOTR16(pos, idx, remain, t);
+            assert(idx < sizeof(nc_nums2nbc) / sizeof(nc_nums2nbc[0]));
+            HANDLE_USHOTR16(pos, t->nums[nc_nums2nbc[idx]], remain, t);
+        });
+      }
+
+      if (!round) {
+        strs_pos = pos;
+      } else {
+        assert(strs_pos != NULL);
+        pos = strs_pos;
+        assert(n > strs_pos - p);
+        remain = n - (strs_pos - p);
+      }
+      if (!round) {
+        FOR_EACH(pos, remain, t, {}, {
+            unsigned short idx __attribute__((unused));
+            HANDLE_USHOTR16(pos, idx, remain, t);
+            HANDLE_STR1(pos, tablsz, remain, t);
+        });
+      } else {
+        assert(strp != NULL);
+        FOR_EACH(pos, remain, t, {}, {
+            unsigned short idx;
+            HANDLE_USHOTR16(pos, idx, remain, t);
+            HANDLE_STR2(pos, strp, len, remain, t);
+            assert(idx < sizeof(nc_strs2nbc) / sizeof(nc_strs2nbc[0]));
+            t->strs[nc_strs2nbc[idx]] = strp;
+            strp += len;
+        });
+      }
+
+      if (!round) {
+        ext_pos = pos;
+      } else {
+        unsigned short extalllen = extboollen + extnumlen + extstrslen;
+        size_t exttablsz = ext_strssz + ext_namessz;
+
+        assert(ext_pos != NULL);
+        pos = ext_pos;
+        assert(n > ext_pos - p);
+        remain = n - (ext_pos - p);
+
+        DEL_FAIL_IF(
+            !DYNARR(bool, ensure_slots)(&t->ext_bools, extboollen) ||
+            !DYNARR(num, ensure_slots)(&t->ext_nums, extnumlen) ||
+            !DYNARR(str, ensure_slots)(&t->ext_strs, extstrslen) ||
+            !DYNARR(str, ensure_slots)(&t->ext_names, extalllen) ||
+            (exttablsz && !(t->ext_alloc = malloc(exttablsz))),
+            ENOMEM,
+            t
+            );
+      }
+      FOR_EACH(pos, remain, t,
+          size_t bool_idx;
+          size_t num_idx;
+          size_t strs_idx;
+          size_t bool_names_idx;
+          size_t num_names_idx;
+          size_t strs_names_idx;
+          char *ext_strs_pos;
+          char *ext_bools_names_pos;
+          char *ext_nums_names_pos;
+          char *ext_strs_names_pos;
+
+          bool_idx = num_idx = strs_idx = 0;
+          bool_names_idx = 0;
+          num_names_idx = extboollen;
+          strs_names_idx = num_names_idx + extnumlen;
+
+          t->ext_names.used = extboollen + extnumlen + extstrslen;
+          t->ext_bools.used = extboollen;
+          t->ext_nums.used = extnumlen;
+          t->ext_strs.used = extstrslen;
+
+          ext_strs_pos = t->ext_alloc;
+          ext_bools_names_pos = ext_strs_pos + ext_strssz;
+          ext_nums_names_pos = ext_bools_names_pos + ext_bools_namessz;
+          ext_strs_names_pos = ext_nums_names_pos + ext_nums_namessz;
+      ,
+          char type;
+          size_t name_len;
+          const char *name_pos;
+
+          HANDLE_USHOTR16(pos, name_len, remain, t);
+          ext_namessz += name_len;
+          remain -= name_len;
+          name_pos = pos;
+          pos += name_len;
+          HANDLE_BYTE(pos, type, remain, t);
+          switch (type) {
+            case 'f':
+              {
+                char flag;
+                HANDLE_BYTE(pos, flag, remain, t);
+                if (!round) {
+                  extboollen++;
+                  ext_bools_namessz += name_len;
+                } else {
+                  t->ext_bools.data[bool_idx++] = !!flag;
+                  memcpy(ext_bools_names_pos, name_pos, name_len);
+                  t->ext_names.data[bool_names_idx++] = ext_bools_names_pos;
+                  ext_bools_names_pos += name_len;
+                }
+                break;
+              }
+            case 'n':
+              {
+                unsigned short num;
+                HANDLE_USHOTR16(pos, num, remain, t);
+                if (!round) {
+                  extnumlen++;
+                  ext_nums_namessz += name_len;
+                } else {
+                  t->ext_nums.data[num_idx++] = num;
+                  memcpy(ext_nums_names_pos, name_pos, name_len);
+                  t->ext_names.data[num_names_idx++] = ext_nums_names_pos;
+                  ext_nums_names_pos += name_len;
+                }
+                break;
+              }
+            case 's':
+              if (!round) {
+                extstrslen++;
+                HANDLE_STR1(pos, ext_strssz, remain, t);
+                ext_strs_namessz += name_len;
+              } else {
+                t->ext_strs.data[strs_idx++] = ext_strs_pos;
+                HANDLE_STR2(pos, ext_strs_pos, len, remain, t);
+                ext_strs_pos += len;
+                memcpy(ext_strs_names_pos, name_pos, name_len);
+                t->ext_names.data[strs_names_idx++] = ext_strs_names_pos;
+                ext_strs_names_pos += name_len;
+              }
+              break;
+            default:
+              unibi_destroy(t);
+              errno = EINVAL;
+              return NULL;
+          }
+      );
+      assert(remain == 0);
+    }
+
+    return t;
+#undef GET_USHORT16
+}
+#else
 unibi_term *unibi_from_mem(const char *p, size_t n) {
     unibi_term *t = NULL;
     size_t numsize;
@@ -439,6 +1220,7 @@ unibi_term *unibi_from_mem(const char *p, size_t n) {
 
     return t;
 }
+#endif
 
 #undef FAIL_IF
 #undef FAIL_IF_
