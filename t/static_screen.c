@@ -3,6 +3,68 @@
 #include <string.h>
 #include "test-simple.c.inc"
 
+#ifdef USE_NETBSD_CURSES
+static const char terminfo[] = {
+  1, 7, 0, 115, 99, 114, 101, 101, 110, 0, 0, 0, 35, 0, 86, 84, 32, 49, 48, 48,
+  47, 65, 78, 83, 73, 32, 88, 51, 46, 54, 52, 32, 118, 105, 114, 116, 117, 97, 108, 32,
+  116, 101, 114, 109, 105, 110, 97, 108, 0, 17, 0, 5, 0, 1, 0, 1, 14, 0, 1, 22,
+  0, 1, 23, 0, 1, 9, 0, 1, 26, 0, 6, 0, 14, 0, 8, 0, 4, 0, 80, 0,
+  7, 0, 8, 0, 10, 0, 24, 0, 21, 0, -2, -1, 17, 0, 64, 0, -40, 3, 87, 0,
+  0, 0, 65, 0, 43, 43, 44, 44, 45, 45, 46, 46, 48, 48, 96, 96, 97, 97, 102, 102,
+  103, 103, 104, 104, 105, 105, 106, 106, 107, 107, 108, 108, 109, 109, 110, 110, 111, 111, 112, 112,
+  113, 113, 114, 114, 115, 115, 116, 116, 117, 117, 118, 118, 119, 119, 120, 120, 121, 121, 122, 122,
+  123, 123, 124, 124, 125, 125, 126, 126, 0, 3, 0, 2, 0, 7, 0, 51, 0, 5, 0, 27,
+  91, 53, 109, 0, 52, 0, 5, 0, 27, 91, 49, 109, 0, 2, 0, 4, 0, 27, 91, 90,
+  0, 29, 0, 7, 0, 27, 91, 63, 50, 53, 108, 0, 17, 0, 7, 0, 27, 91, 72, 27,
+  91, 74, 0, 32, 0, 12, 0, 27, 91, 51, 52, 104, 27, 91, 63, 50, 53, 104, 0, 7,
+  0, 2, 0, 13, 0, 12, 0, 17, 0, 27, 91, 37, 105, 37, 112, 49, 37, 100, 59, 37,
+  112, 50, 37, 100, 114, 0, 51, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 68, 0, 30,
+  0, 2, 0, 8, 0, 46, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 66, 0, 27, 0,
+  2, 0, 10, 0, 53, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 67, 0, 33, 0, 4,
+  0, 27, 91, 67, 0, 26, 0, 17, 0, 27, 91, 37, 105, 37, 112, 49, 37, 100, 59, 37,
+  112, 50, 37, 100, 72, 0, 56, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 65, 0, 35,
+  0, 3, 0, 27, 77, 0, 36, 0, 6, 0, 27, 91, 51, 52, 108, 0, 44, 1, 9, 0,
+  27, 91, 37, 112, 49, 37, 100, 80, 0, 39, 0, 4, 0, 27, 91, 80, 0, 55, 0, 5,
+  0, 27, 91, 50, 109, 0, 45, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 77, 0, 40,
+  0, 4, 0, 27, 91, 77, 0, 20, 0, 4, 0, 27, 91, 74, 0, 19, 0, 4, 0, 27,
+  91, 75, 0, 18, 0, 5, 0, 27, 91, 49, 75, 0, 47, 0, 7, 0, 27, 40, 66, 27,
+  41, 48, 0, 104, 0, 3, 0, 27, 103, 0, 28, 0, 4, 0, 27, 91, 72, 0, 118, 1,
+  2, 0, 9, 0, 107, 1, 3, 0, 27, 72, 0, 48, 1, 9, 0, 27, 91, 37, 112, 49,
+  37, 100, 64, 0, 50, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 76, 0, 118, 0, 4,
+  0, 27, 91, 76, 0, 82, 1, 2, 0, 10, 0, 111, 0, 4, 0, 27, 41, 48, 0, 123,
+  0, 2, 0, 8, 0, 125, 0, 4, 0, 27, 91, 90, 0, -42, 0, 4, 0, 27, 79, 68,
+  0, -118, 0, 4, 0, 27, 79, 66, 0, -23, 0, 4, 0, 27, 79, 67, 0, 13, 1, 4,
+  0, 27, 79, 65, 0, -120, 0, 5, 0, 27, 91, 51, 126, 0, -116, 0, 5, 0, 27, 91,
+  52, 126, 0, -110, 0, 4, 0, 27, 79, 80, 0, -101, 0, 6, 0, 27, 91, 50, 49, 126,
+  0, -100, 0, 6, 0, 27, 91, 50, 51, 126, 0, -99, 0, 6, 0, 27, 91, 50, 52, 126,
+  0, -109, 0, 4, 0, 27, 79, 81, 0, -108, 0, 4, 0, 27, 79, 82, 0, -107, 0, 4,
+  0, 27, 79, 83, 0, -106, 0, 6, 0, 27, 91, 49, 53, 126, 0, -105, 0, 6, 0, 27,
+  91, 49, 55, 126, 0, -104, 0, 6, 0, 27, 91, 49, 56, 126, 0, -103, 0, 6, 0, 27,
+  91, 49, 57, 126, 0, -102, 0, 6, 0, 27, 91, 50, 48, 126, 0, -45, 0, 5, 0, 27,
+  91, 49, 126, 0, -44, 0, 5, 0, 27, 91, 50, 126, 0, -38, 0, 4, 0, 27, 91, 77,
+  0, -35, 0, 5, 0, 27, 91, 54, 126, 0, -32, 0, 5, 0, 27, 91, 53, 126, 0, 39,
+  1, 3, 0, 27, 69, 0, 78, 1, 3, 0, 27, 56, 0, 69, 0, 5, 0, 27, 91, 55,
+  109, 0, 83, 1, 3, 0, 27, 77, 0, 83, 0, 2, 0, 15, 0, 86, 0, 9, 0, 27,
+  91, 63, 49, 48, 52, 57, 108, 0, 89, 0, 5, 0, 27, 91, 52, 108, 0, 14, 1, 8,
+  0, 27, 91, 63, 49, 108, 27, 62, 0, 96, 0, 6, 0, 27, 91, 50, 51, 109, 0, 99,
+  0, 6, 0, 27, 91, 50, 52, 109, 0, 75, 1, 17, 0, 27, 99, 27, 91, 63, 49, 48,
+  48, 48, 108, 27, 91, 63, 50, 53, 104, 0, 80, 1, 3, 0, 27, 55, 0, 92, 1, 84,
+  0, 27, 91, 48, 37, 63, 37, 112, 54, 37, 116, 59, 49, 37, 59, 37, 63, 37, 112, 49,
+  37, 116, 59, 51, 37, 59, 37, 63, 37, 112, 50, 37, 116, 59, 52, 37, 59, 37, 63, 37,
+  112, 51, 37, 116, 59, 55, 37, 59, 37, 63, 37, 112, 52, 37, 116, 59, 53, 37, 59, 37,
+  63, 37, 112, 53, 37, 116, 59, 50, 37, 59, 109, 37, 63, 37, 112, 57, 37, 116, 14, 37,
+  101, 15, 37, 59, 0, 85, 0, 5, 0, 27, 91, 109, 15, 0, 49, 0, 2, 0, 14, 0,
+  53, 0, 9, 0, 27, 91, 63, 49, 48, 52, 57, 104, 0, 59, 0, 5, 0, 27, 91, 52,
+  104, 0, 15, 1, 8, 0, 27, 91, 63, 49, 104, 27, 61, 0, 74, 0, 5, 0, 27, 91,
+  51, 109, 0, 78, 0, 5, 0, 27, 91, 52, 109, 0, 15, 0, 5, 0, 27, 91, 51, 103,
+  0, 42, 1, 9, 0, 27, 91, 51, 57, 59, 52, 57, 109, 0, 90, 1, 10, 0, 27, 91,
+  52, 37, 112, 49, 37, 100, 109, 0, 91, 1, 10, 0, 27, 91, 51, 37, 112, 49, 37, 100,
+  109, 0, 66, 0, 7, 0, 3, 0, 98, 115, 0, 102, 1, 3, 0, 112, 116, 0, 102, 1,
+  3, 0, 71, 48, 0, 102, 1, 3, 0, 85, 56, 0, 110, 1, 0, 3, 0, 69, 48, 0,
+  115, 4, 0, 27, 40, 66, 0, 3, 0, 83, 48, 0, 115, 8, 0, 27, 40, 37, 112, 49,
+  37, 99, 0, 3, 0, 65, 88, 0, 102, 1
+};
+#else
 static const char terminfo[] = {
     26, 1, 42, 0, 43, 0, 15, 0, 105, 1, -103, 2, 115, 99, 114, 101, 101, 110, 124, 86,
     84, 32, 49, 48, 48, 47, 65, 78, 83, 73, 32, 88, 51, 46, 54, 52, 32, 118, 105, 114,
@@ -88,6 +150,7 @@ static const char terminfo[] = {
     107, 69, 78, 68, 53, 0, 107, 72, 79, 77, 53, 0, 107, 97, 50, 0, 107, 98, 49, 0,
     107, 98, 51, 0, 107, 99, 50, 0, 120, 109, 0
 };
+#endif
 
 static void setup(void);
 
@@ -103,7 +166,11 @@ int main(void) {
     if (!dt) {
         bail_out(strerror(e));
     }
+#ifdef USE_NETBSD_CURSES
+    unibi_term *ut = unibi_from_nbc_mem(terminfo, sizeof terminfo);
+#else
     unibi_term *ut = unibi_from_mem(terminfo, sizeof terminfo);
+#endif
     e = errno;
     ok(ut != NULL, "terminfo loaded");
     if (!ut) {
@@ -164,14 +231,22 @@ int main(void) {
     ok(unibi_get_bool(ut, unibi_semi_auto_right_margin) == 0, "semi_auto_right_margin = false");
     ok(unibi_get_bool(ut, unibi_cpi_changes_res) == 0, "cpi_changes_res = false");
     ok(unibi_get_bool(ut, unibi_lpi_changes_res) == 0, "lpi_changes_res = false");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_bool(ut, unibi_backspaces_with_bs) == 0, "backspaces_with_bs = false");
+#else
     ok(unibi_get_bool(ut, unibi_backspaces_with_bs) == 1, "backspaces_with_bs = true");
     unibi_set_bool(dt, unibi_backspaces_with_bs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_crt_no_scrolling) == 0, "crt_no_scrolling = false");
     ok(unibi_get_bool(ut, unibi_no_correctly_working_cr) == 0, "no_correctly_working_cr = false");
     ok(unibi_get_bool(ut, unibi_gnu_has_meta_key) == 0, "gnu_has_meta_key = false");
     ok(unibi_get_bool(ut, unibi_linefeed_is_newline) == 0, "linefeed_is_newline = false");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_bool(ut, unibi_has_hardware_tabs) == 0, "has_hardware_tabs = false");
+#else
     ok(unibi_get_bool(ut, unibi_has_hardware_tabs) == 1, "has_hardware_tabs = true");
     unibi_set_bool(dt, unibi_has_hardware_tabs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_return_does_clr_eol) == 0, "return_does_clr_eol = false");
 
     note("numeric capabilities");
@@ -237,8 +312,12 @@ int main(void) {
     unibi_set_str(dt, unibi_clr_eol, "\033[K");
     ok(strcmp(unibi_get_str(ut, unibi_clr_eos), "\033[J") == 0, "clr_eos = \"%s\"", "\\033[J");
     unibi_set_str(dt, unibi_clr_eos, "\033[J");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_column_address) == NULL, "column_address = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_column_address), "\033[%i%p1%dG") == 0, "column_address = \"%s\"", "\\033[%i%p1%dG");
     unibi_set_str(dt, unibi_column_address, "\033[%i%p1%dG");
+#endif
     ok(unibi_get_str(ut, unibi_command_character) == NULL, "command_character = null");
     ok(strcmp(unibi_get_str(ut, unibi_cursor_address), "\033[%i%p1%d;%p2%dH") == 0, "cursor_address = \"%s\"", "\\033[%i%p1%d;%p2%dH");
     unibi_set_str(dt, unibi_cursor_address, "\033[%i%p1%d;%p2%dH");
@@ -395,8 +474,12 @@ int main(void) {
     unibi_set_str(dt, unibi_parm_down_cursor, "\033[%p1%dB");
     ok(strcmp(unibi_get_str(ut, unibi_parm_ich), "\033[%p1%d@") == 0, "parm_ich = \"%s\"", "\\033[%p1%d@");
     unibi_set_str(dt, unibi_parm_ich, "\033[%p1%d@");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_parm_index) == NULL, "parm_index = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_parm_index), "\033[%p1%dS") == 0, "parm_index = \"%s\"", "\\033[%p1%dS");
     unibi_set_str(dt, unibi_parm_index, "\033[%p1%dS");
+#endif
     ok(strcmp(unibi_get_str(ut, unibi_parm_insert_line), "\033[%p1%dL") == 0, "parm_insert_line = \"%s\"", "\\033[%p1%dL");
     unibi_set_str(dt, unibi_parm_insert_line, "\033[%p1%dL");
     ok(strcmp(unibi_get_str(ut, unibi_parm_left_cursor), "\033[%p1%dD") == 0, "parm_left_cursor = \"%s\"", "\\033[%p1%dD");
@@ -420,8 +503,12 @@ int main(void) {
     ok(unibi_get_str(ut, unibi_reset_file) == NULL, "reset_file = null");
     ok(strcmp(unibi_get_str(ut, unibi_restore_cursor), "\0338") == 0, "restore_cursor = \"%s\"", "\\0338");
     unibi_set_str(dt, unibi_restore_cursor, "\0338");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_row_address) == NULL, "row_address = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_row_address), "\033[%i%p1%dd") == 0, "row_address = \"%s\"", "\\033[%i%p1%dd");
     unibi_set_str(dt, unibi_row_address, "\033[%i%p1%dd");
+#endif
     ok(strcmp(unibi_get_str(ut, unibi_save_cursor), "\0337") == 0, "save_cursor = \"%s\"", "\\0337");
     unibi_set_str(dt, unibi_save_cursor, "\0337");
     ok(strcmp(unibi_get_str(ut, unibi_scroll_forward), "\012") == 0, "scroll_forward = \"%s\"", "\\012");
@@ -728,6 +815,22 @@ int main(void) {
 
     note("extended boolean capabilities");
     {
+#ifdef USE_NETBSD_CURSES
+        const size_t n_ext = unibi_count_ext_bool(ut);
+        ok(n_ext == 4, "#ext_bool = 4");
+        ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
+        ok(0 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 0), "bs") == 0, "ext_bool[0].name = \"%s\"", "AX");
+        unibi_add_ext_bool(dt, "bs", 1);
+        ok(1 < n_ext && unibi_get_ext_bool(ut, 1) == 1, "ext_bool[1].value = 1");
+        ok(1 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 1), "pt") == 0, "ext_bool[1].name = \"%s\"", "pt");
+        unibi_add_ext_bool(dt, "pt", 1);
+        ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 1, "ext_bool[2].value = 1");
+        ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "G0") == 0, "ext_bool[2].name = \"%s\"", "G0");
+        unibi_add_ext_bool(dt, "G0", 1);
+        ok(3 < n_ext && unibi_get_ext_bool(ut, 3) == 1, "ext_bool[3].value = 1");
+        ok(3 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 3), "AX") == 0, "ext_bool[3].name = \"%s\"", "AX");
+        unibi_add_ext_bool(dt, "AX", 1);
+#else
         const size_t n_ext = unibi_count_ext_bool(ut);
         ok(n_ext == 3, "#ext_bool = 3");
         ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
@@ -739,6 +842,7 @@ int main(void) {
         ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 0, "ext_bool[2].value = 0");
         ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "XT") == 0, "ext_bool[2].name = \"%s\"", "XT");
         unibi_add_ext_bool(dt, "XT", 0);
+#endif
     }
 
     note("extended numeric capabilities");
@@ -752,6 +856,16 @@ int main(void) {
 
     note("extended string capabilities");
     {
+#ifdef USE_NETBSD_CURSES
+        const size_t n_ext = unibi_count_ext_str(ut);
+        ok(n_ext == 2, "#ext_str = 2");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033(B") == 0, "ext_str[0].value = \"%s\"", "\\033(B");
+        unibi_add_ext_str(dt, "E0", "\033(B");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str_name(ut, 0), "E0") == 0, "ext_str[0].name = \"%s\"", "E0");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str(ut, 1), "\033(%p1%c") == 0, "ext_str[1].value = \"%s\"", "\\033(%p1%c");
+        unibi_add_ext_str(dt, "S0", "\033(%p1%c");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str_name(ut, 1), "S0") == 0, "ext_str[1].name = \"%s\"", "S0");
+#else
         const size_t n_ext = unibi_count_ext_str(ut);
         ok(n_ext == 11, "#ext_str = 11");
         ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033(B") == 0, "ext_str[0].value = \"%s\"", "\\033(B");
@@ -787,8 +901,19 @@ int main(void) {
         ok(10 < n_ext && unibi_get_ext_str(ut, 10) == NULL, "ext_str[10].value = null");
         unibi_add_ext_str(dt, "xm", NULL);
         ok(10 < n_ext && strcmp(unibi_get_ext_str_name(ut, 10), "xm") == 0, "ext_str[10].name = \"%s\"", "xm");
+#endif
     }
 
+#ifdef USE_NETBSD_CURSES
+    {
+        char buf1[4096];
+        char buf2[4096];
+        size_t r1 = unibi_dump(ut, buf1, sizeof buf1);
+        size_t r2 = unibi_dump(dt, buf2, sizeof buf2);
+        ok(r1 == r2, "dump: read size == dummy size");
+        ok(memcmp(buf1, buf2, r1) == 0, "dump == orig");
+    }
+#else
     {
         char buf[sizeof terminfo];
         size_t r = unibi_dump(ut, buf, sizeof buf);
@@ -802,6 +927,7 @@ int main(void) {
         ok(r == sizeof terminfo, "dummy redump size == orig size");
         ok(memcmp(terminfo, buf, sizeof buf) == 0, "dummy redump == orig");
     }
+#endif
 
     unibi_destroy(ut);
     ok(1, "object destroyed");
@@ -813,5 +939,9 @@ int main(void) {
 }
 
 static void setup(void) {
+#ifdef USE_NETBSD_CURSES
+    plan(523);
+#else
     plan(541);
+#endif
 }

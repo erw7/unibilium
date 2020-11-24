@@ -70,6 +70,19 @@ TOOLS=$(wildcard tools/*.c)
 
 TESTS=$(wildcard t/*.c)
 
+TIC=:
+TIC_OPT=-x -o
+TI=$(wildcard t/fixtures/*.ti)
+DB_PREFIX=
+ifeq ($(USE_HASHED_DB), 1)
+	TIC=tic
+	DB_PREFIX=.db
+endif
+ifeq ($(USE_NETBSD_CURSES), 1)
+	TIC=tic
+	DB_PREFIX=.cdb
+endif
+
 .PHONY: all
 all: $(LIBRARY) build-man build-tools build-test
 
@@ -94,8 +107,11 @@ build-tools: $(TOOLS:.c=)
 .PHONY: build-test
 build-test: $(TESTS:.c=.t)
 
+t/fixtures/terminfo:
+	$(TIC) $(TIC_OPT) $@$(DB_PREFIX) $(TI)
+
 .PHONY: test
-test: build-test
+test: t/fixtures/terminfo build-test
 	@echo $(PROVE) $(PROVEFLAGS)
 	@$(PROVE) $(PROVEFLAGS)
 

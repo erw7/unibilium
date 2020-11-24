@@ -167,7 +167,14 @@ unibi_term *unibi_from_db(const char *file, const char *term) {
 
   return ut;
 }
-#elif defined(USE_NETBSD_CURSES)
+#else
+unibi_term *unibi_from_db(const char *file, const char *term) {
+    errno = ENOTSUP;
+    return NULL;
+}
+#endif
+
+#ifdef USE_NETBSD_CURSES
 static struct cdbr *unibi_db_open(const char *path) {
   return cdbr_open(path, CDBR_DEFAULT);
 }
@@ -186,7 +193,7 @@ static int unibi_db_find(struct cdbr *dbp, const void *key, size_t keylen,
   return cdbr_find(dbp, key, keylen, data, datalen);
 }
 
-unibi_term *unibi_from_db(const char *file, const char *term) {
+unibi_term *unibi_from_nbc_db(const char *file, const char *term) {
   struct cdbr *dbp;
   unibi_term *ut = NULL;
 
@@ -206,7 +213,7 @@ unibi_term *unibi_from_db(const char *file, const char *term) {
           return NULL;
         }
       }
-      ut = unibi_from_mem(data, datalen);
+      ut = unibi_from_nbc_mem(data, datalen);
     }
     unibi_db_close(dbp);
   }
@@ -214,6 +221,12 @@ unibi_term *unibi_from_db(const char *file, const char *term) {
   return ut;
 }
 #else
+unibi_term *unibi_from_nbc_db(const char *file, const char *term) {
+    errno = ENOTSUP;
+    return NULL;
+}
+#endif
+
 unibi_term *unibi_from_file(const char *file) {
     int fd;
     unibi_term *ut;
@@ -226,7 +239,6 @@ unibi_term *unibi_from_file(const char *file) {
     close(fd);
     return ut;
 }
-#endif
 
 static int add_overflowed(size_t *dst, size_t src) {
     *dst += src;
@@ -267,14 +279,14 @@ static unibi_term *from_dir(const char *dir_begin, const char *dir_end, const ch
     }
 
     memcpy(path, dir_begin, dir_len);
-#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
-# ifdef USE_HASHED_DB
+#if defined(USE_HASHED_DB)
     sprintf(path + dir_len, "%s"             "%s.db",
-#else
-    sprintf(path + dir_len, "%s"             "%s.cdb",
-#endif
                              mid ? "/" : "", mid ? mid : "");
     ut = unibi_from_db(path, term);
+#elif defined(USE_NETBSD_CURSES)
+    sprintf(path + dir_len, "%s"             "%s.cdb",
+                             mid ? "/" : "", mid ? mid : "");
+    ut = unibi_from_nbc_db(path, term);
 #else
     sprintf(path + dir_len, "/" "%s"            "%s"             "%c" "/" "%s",
                                  mid ? mid : "", mid ? "/" : "",  term[0], term);

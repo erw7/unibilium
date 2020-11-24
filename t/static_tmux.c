@@ -3,6 +3,156 @@
 #include <string.h>
 #include "test-simple.c.inc"
 
+#ifdef USE_NETBSD_CURSES
+static const char terminfo[] = {
+  1, 5, 0, 116, 109, 117, 120, 0, 0, 0, 26, 0, 116, 109, 117, 120, 32, 116, 101, 114,
+  109, 105, 110, 97, 108, 32, 109, 117, 108, 116, 105, 112, 108, 101, 120, 101, 114, 0, 20, 0,
+  6, 0, 16, 0, 1, 1, 0, 1, 14, 0, 1, 22, 0, 1, 23, 0, 1, 9, 0, 1,
+  22, 0, 5, 0, 14, 0, 8, 0, 4, 0, 80, 0, 7, 0, 8, 0, 10, 0, 24, 0,
+  17, 0, 64, 0, -61, 6, -103, 0, 90, 0, 6, 0, 27, 91, 50, 51, 109, 0, 96, 0,
+  6, 0, 27, 91, 50, 55, 109, 0, 60, 0, 5, 0, 27, 91, 51, 109, 0, 74, 0, 5,
+  0, 27, 91, 55, 109, 0, -120, 0, 5, 0, 27, 91, 51, 126, 0, -44, 0, 5, 0, 27,
+  91, 50, 126, 0, -35, 0, 5, 0, 27, 91, 54, 126, 0, -32, 0, 5, 0, 27, 91, 53,
+  126, 0, -116, 0, 5, 0, 27, 91, 52, 126, 0, -45, 0, 5, 0, 27, 91, 49, 126, 0,
+  -42, 0, 4, 0, 27, 79, 68, 0, -118, 0, 4, 0, 27, 79, 66, 0, -23, 0, 4, 0,
+  27, 79, 67, 0, 13, 1, 4, 0, 27, 79, 65, 0, -110, 0, 4, 0, 27, 79, 80, 0,
+  -101, 0, 6, 0, 27, 91, 50, 49, 126, 0, -100, 0, 6, 0, 27, 91, 50, 51, 126, 0,
+  -99, 0, 6, 0, 27, 91, 50, 52, 126, 0, -98, 0, 7, 0, 27, 91, 49, 59, 50, 80,
+  0, -97, 0, 7, 0, 27, 91, 49, 59, 50, 81, 0, -96, 0, 7, 0, 27, 91, 49, 59,
+  50, 82, 0, -95, 0, 7, 0, 27, 91, 49, 59, 50, 83, 0, -94, 0, 8, 0, 27, 91,
+  49, 53, 59, 50, 126, 0, -93, 0, 8, 0, 27, 91, 49, 55, 59, 50, 126, 0, -92, 0,
+  8, 0, 27, 91, 49, 56, 59, 50, 126, 0, -109, 0, 4, 0, 27, 79, 81, 0, -91, 0,
+  8, 0, 27, 91, 49, 57, 59, 50, 126, 0, -90, 0, 8, 0, 27, 91, 50, 48, 59, 50,
+  126, 0, -89, 0, 8, 0, 27, 91, 50, 49, 59, 50, 126, 0, -88, 0, 8, 0, 27, 91,
+  50, 51, 59, 50, 126, 0, -87, 0, 8, 0, 27, 91, 50, 52, 59, 50, 126, 0, -86, 0,
+  7, 0, 27, 91, 49, 59, 53, 80, 0, -85, 0, 7, 0, 27, 91, 49, 59, 53, 81, 0,
+  -84, 0, 7, 0, 27, 91, 49, 59, 53, 82, 0, -83, 0, 7, 0, 27, 91, 49, 59, 53,
+  83, 0, -82, 0, 8, 0, 27, 91, 49, 53, 59, 53, 126, 0, -108, 0, 4, 0, 27, 79,
+  82, 0, -81, 0, 8, 0, 27, 91, 49, 55, 59, 53, 126, 0, -80, 0, 8, 0, 27, 91,
+  49, 56, 59, 53, 126, 0, -79, 0, 8, 0, 27, 91, 49, 57, 59, 53, 126, 0, -78, 0,
+  8, 0, 27, 91, 50, 48, 59, 53, 126, 0, -77, 0, 8, 0, 27, 91, 50, 49, 59, 53,
+  126, 0, -76, 0, 8, 0, 27, 91, 50, 51, 59, 53, 126, 0, -75, 0, 8, 0, 27, 91,
+  50, 52, 59, 53, 126, 0, -74, 0, 7, 0, 27, 91, 49, 59, 54, 80, 0, -73, 0, 7,
+  0, 27, 91, 49, 59, 54, 81, 0, -72, 0, 7, 0, 27, 91, 49, 59, 54, 82, 0, -107,
+  0, 4, 0, 27, 79, 83, 0, -71, 0, 7, 0, 27, 91, 49, 59, 54, 83, 0, -70, 0,
+  8, 0, 27, 91, 49, 53, 59, 54, 126, 0, -69, 0, 8, 0, 27, 91, 49, 55, 59, 54,
+  126, 0, -68, 0, 8, 0, 27, 91, 49, 56, 59, 54, 126, 0, -67, 0, 8, 0, 27, 91,
+  49, 57, 59, 54, 126, 0, -66, 0, 8, 0, 27, 91, 50, 48, 59, 54, 126, 0, -65, 0,
+  8, 0, 27, 91, 50, 49, 59, 54, 126, 0, -64, 0, 8, 0, 27, 91, 50, 51, 59, 54,
+  126, 0, -63, 0, 8, 0, 27, 91, 50, 52, 59, 54, 126, 0, -62, 0, 7, 0, 27, 91,
+  49, 59, 51, 80, 0, -106, 0, 6, 0, 27, 91, 49, 53, 126, 0, -61, 0, 7, 0, 27,
+  91, 49, 59, 51, 81, 0, -60, 0, 7, 0, 27, 91, 49, 59, 51, 82, 0, -59, 0, 7,
+  0, 27, 91, 49, 59, 51, 83, 0, -58, 0, 8, 0, 27, 91, 49, 53, 59, 51, 126, 0,
+  -57, 0, 8, 0, 27, 91, 49, 55, 59, 51, 126, 0, -56, 0, 8, 0, 27, 91, 49, 56,
+  59, 51, 126, 0, -55, 0, 8, 0, 27, 91, 49, 57, 59, 51, 126, 0, -54, 0, 8, 0,
+  27, 91, 50, 48, 59, 51, 126, 0, -53, 0, 8, 0, 27, 91, 50, 49, 59, 51, 126, 0,
+  -52, 0, 8, 0, 27, 91, 50, 51, 59, 51, 126, 0, -105, 0, 6, 0, 27, 91, 49, 55,
+  126, 0, -51, 0, 8, 0, 27, 91, 50, 52, 59, 51, 126, 0, -50, 0, 7, 0, 27, 91,
+  49, 59, 52, 80, 0, -49, 0, 7, 0, 27, 91, 49, 59, 52, 81, 0, -48, 0, 7, 0,
+  27, 91, 49, 59, 52, 82, 0, -104, 0, 6, 0, 27, 91, 49, 56, 126, 0, -103, 0, 6,
+  0, 27, 91, 49, 57, 126, 0, -102, 0, 6, 0, 27, 91, 50, 48, 126, 0, -5, 0, 7,
+  0, 27, 91, 49, 59, 50, 68, 0, 5, 1, 7, 0, 27, 91, 49, 59, 50, 67, 0, -10,
+  0, 7, 0, 27, 91, 49, 59, 50, 66, 0, 2, 1, 7, 0, 27, 91, 49, 59, 50, 65,
+  0, -16, 0, 7, 0, 27, 91, 51, 59, 50, 126, 0, -13, 0, 7, 0, 27, 91, 49, 59,
+  50, 70, 0, -7, 0, 7, 0, 27, 91, 49, 59, 50, 72, 0, -6, 0, 7, 0, 27, 91,
+  50, 59, 50, 126, 0, -2, 0, 7, 0, 27, 91, 54, 59, 50, 126, 0, 0, 1, 7, 0,
+  27, 91, 53, 59, 50, 126, 0, 43, 0, 6, 0, 27, 93, 48, 59, 7, 0, 106, 0, 2,
+  0, 7, 0, 120, 1, 5, 0, 27, 93, 48, 59, 0, 0, 0, 65, 0, 43, 43, 44, 44,
+  45, 45, 46, 46, 48, 48, 96, 96, 97, 97, 102, 102, 103, 103, 104, 104, 105, 105, 106, 106,
+  107, 107, 108, 108, 109, 109, 110, 110, 111, 111, 112, 112, 113, 113, 114, 114, 115, 115, 116, 116,
+  117, 117, 118, 118, 119, 119, 120, 120, 121, 121, 122, 122, 123, 123, 124, 124, 125, 125, 126, 126,
+  0, 3, 0, 2, 0, 7, 0, 51, 0, 5, 0, 27, 91, 53, 109, 0, 52, 0, 5, 0,
+  27, 91, 49, 109, 0, 2, 0, 4, 0, 27, 91, 90, 0, 29, 0, 7, 0, 27, 91, 63,
+  50, 53, 108, 0, 17, 0, 7, 0, 27, 91, 72, 27, 91, 74, 0, 32, 0, 12, 0, 27,
+  91, 51, 52, 104, 27, 91, 63, 50, 53, 104, 0, 7, 0, 2, 0, 13, 0, 12, 0, 17,
+  0, 27, 91, 37, 105, 37, 112, 49, 37, 100, 59, 37, 112, 50, 37, 100, 114, 0, 51, 1,
+  9, 0, 27, 91, 37, 112, 49, 37, 100, 68, 0, 30, 0, 2, 0, 8, 0, 46, 1, 9,
+  0, 27, 91, 37, 112, 49, 37, 100, 66, 0, 27, 0, 2, 0, 10, 0, 53, 1, 9, 0,
+  27, 91, 37, 112, 49, 37, 100, 67, 0, 33, 0, 4, 0, 27, 91, 67, 0, 26, 0, 17,
+  0, 27, 91, 37, 105, 37, 112, 49, 37, 100, 59, 37, 112, 50, 37, 100, 72, 0, 56, 1,
+  9, 0, 27, 91, 37, 112, 49, 37, 100, 65, 0, 35, 0, 3, 0, 27, 77, 0, 36, 0,
+  6, 0, 27, 91, 51, 52, 108, 0, 44, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 80,
+  0, 39, 0, 4, 0, 27, 91, 80, 0, 55, 0, 5, 0, 27, 91, 50, 109, 0, 45, 1,
+  9, 0, 27, 91, 37, 112, 49, 37, 100, 77, 0, 40, 0, 4, 0, 27, 91, 77, 0, 20,
+  0, 4, 0, 27, 91, 74, 0, 19, 0, 4, 0, 27, 91, 75, 0, 18, 0, 5, 0, 27,
+  91, 49, 75, 0, 47, 0, 7, 0, 27, 40, 66, 27, 41, 48, 0, 104, 0, 3, 0, 27,
+  103, 0, 28, 0, 4, 0, 27, 91, 72, 0, 118, 1, 2, 0, 9, 0, 107, 1, 3, 0,
+  27, 72, 0, 48, 1, 9, 0, 27, 91, 37, 112, 49, 37, 100, 64, 0, 50, 1, 9, 0,
+  27, 91, 37, 112, 49, 37, 100, 76, 0, 118, 0, 4, 0, 27, 91, 76, 0, 82, 1, 2,
+  0, 10, 0, 111, 0, 4, 0, 27, 41, 48, 0, 123, 0, 2, 0, 8, 0, 125, 0, 4,
+  0, 27, 91, 90, 0, -38, 0, 4, 0, 27, 91, 77, 0, 39, 1, 3, 0, 27, 69, 0,
+  78, 1, 3, 0, 27, 56, 0, 69, 0, 5, 0, 27, 91, 55, 109, 0, 83, 1, 3, 0,
+  27, 77, 0, 83, 0, 2, 0, 15, 0, 86, 0, 9, 0, 27, 91, 63, 49, 48, 52, 57,
+  108, 0, 89, 0, 5, 0, 27, 91, 52, 108, 0, 14, 1, 8, 0, 27, 91, 63, 49, 108,
+  27, 62, 0, 99, 0, 6, 0, 27, 91, 50, 52, 109, 0, 75, 1, 17, 0, 27, 99, 27,
+  91, 63, 49, 48, 48, 48, 108, 27, 91, 63, 50, 53, 104, 0, 80, 1, 3, 0, 27, 55,
+  0, 92, 1, 84, 0, 27, 91, 48, 37, 63, 37, 112, 54, 37, 116, 59, 49, 37, 59, 37,
+  63, 37, 112, 49, 37, 116, 59, 51, 37, 59, 37, 63, 37, 112, 50, 37, 116, 59, 52, 37,
+  59, 37, 63, 37, 112, 51, 37, 116, 59, 55, 37, 59, 37, 63, 37, 112, 52, 37, 116, 59,
+  53, 37, 59, 37, 63, 37, 112, 53, 37, 116, 59, 50, 37, 59, 109, 37, 63, 37, 112, 57,
+  37, 116, 14, 37, 101, 15, 37, 59, 0, 85, 0, 5, 0, 27, 91, 109, 15, 0, 49, 0,
+  2, 0, 14, 0, 53, 0, 9, 0, 27, 91, 63, 49, 48, 52, 57, 104, 0, 59, 0, 5,
+  0, 27, 91, 52, 104, 0, 15, 1, 8, 0, 27, 91, 63, 49, 104, 27, 61, 0, 78, 0,
+  5, 0, 27, 91, 52, 109, 0, 15, 0, 5, 0, 27, 91, 51, 103, 0, 42, 1, 9, 0,
+  27, 91, 51, 57, 59, 52, 57, 109, 0, 90, 1, 10, 0, 27, 91, 52, 37, 112, 49, 37,
+  100, 109, 0, 91, 1, 10, 0, 27, 91, 51, 37, 112, 49, 37, 100, 109, 0, 60, 4, 65,
+  0, 4, 0, 107, 68, 78, 0, 115, 7, 0, 27, 91, 49, 59, 50, 66, 0, 5, 0, 107,
+  68, 78, 51, 0, 115, 7, 0, 27, 91, 49, 59, 51, 66, 0, 5, 0, 107, 68, 78, 52,
+  0, 115, 7, 0, 27, 91, 49, 59, 52, 66, 0, 5, 0, 107, 68, 78, 53, 0, 115, 7,
+  0, 27, 91, 49, 59, 53, 66, 0, 5, 0, 107, 68, 78, 54, 0, 115, 7, 0, 27, 91,
+  49, 59, 54, 66, 0, 5, 0, 107, 68, 78, 55, 0, 115, 7, 0, 27, 91, 49, 59, 55,
+  66, 0, 6, 0, 107, 76, 70, 84, 51, 0, 115, 7, 0, 27, 91, 49, 59, 51, 68, 0,
+  6, 0, 107, 76, 70, 84, 52, 0, 115, 7, 0, 27, 91, 49, 59, 52, 68, 0, 6, 0,
+  107, 76, 70, 84, 53, 0, 115, 7, 0, 27, 91, 49, 59, 53, 68, 0, 6, 0, 107, 76,
+  70, 84, 54, 0, 115, 7, 0, 27, 91, 49, 59, 54, 68, 0, 6, 0, 107, 76, 70, 84,
+  55, 0, 115, 7, 0, 27, 91, 49, 59, 55, 68, 0, 6, 0, 107, 82, 73, 84, 51, 0,
+  115, 7, 0, 27, 91, 49, 59, 51, 67, 0, 6, 0, 107, 82, 73, 84, 52, 0, 115, 7,
+  0, 27, 91, 49, 59, 52, 67, 0, 6, 0, 107, 82, 73, 84, 53, 0, 115, 7, 0, 27,
+  91, 49, 59, 53, 67, 0, 6, 0, 107, 82, 73, 84, 54, 0, 115, 7, 0, 27, 91, 49,
+  59, 54, 67, 0, 6, 0, 107, 82, 73, 84, 55, 0, 115, 7, 0, 27, 91, 49, 59, 55,
+  67, 0, 4, 0, 107, 85, 80, 0, 115, 7, 0, 27, 91, 49, 59, 50, 65, 0, 5, 0,
+  107, 85, 80, 51, 0, 115, 7, 0, 27, 91, 49, 59, 51, 65, 0, 5, 0, 107, 85, 80,
+  52, 0, 115, 7, 0, 27, 91, 49, 59, 52, 65, 0, 5, 0, 107, 85, 80, 53, 0, 115,
+  7, 0, 27, 91, 49, 59, 53, 65, 0, 5, 0, 107, 85, 80, 54, 0, 115, 7, 0, 27,
+  91, 49, 59, 54, 65, 0, 5, 0, 107, 85, 80, 55, 0, 115, 7, 0, 27, 91, 49, 59,
+  55, 65, 0, 5, 0, 107, 68, 67, 51, 0, 115, 7, 0, 27, 91, 51, 59, 51, 126, 0,
+  5, 0, 107, 68, 67, 52, 0, 115, 7, 0, 27, 91, 51, 59, 52, 126, 0, 5, 0, 107,
+  68, 67, 53, 0, 115, 7, 0, 27, 91, 51, 59, 53, 126, 0, 5, 0, 107, 68, 67, 54,
+  0, 115, 7, 0, 27, 91, 51, 59, 54, 126, 0, 5, 0, 107, 68, 67, 55, 0, 115, 7,
+  0, 27, 91, 51, 59, 55, 126, 0, 6, 0, 107, 69, 78, 68, 51, 0, 115, 7, 0, 27,
+  91, 49, 59, 51, 70, 0, 6, 0, 107, 69, 78, 68, 52, 0, 115, 7, 0, 27, 91, 49,
+  59, 52, 70, 0, 6, 0, 107, 69, 78, 68, 53, 0, 115, 7, 0, 27, 91, 49, 59, 53,
+  70, 0, 6, 0, 107, 69, 78, 68, 54, 0, 115, 7, 0, 27, 91, 49, 59, 54, 70, 0,
+  6, 0, 107, 69, 78, 68, 55, 0, 115, 7, 0, 27, 91, 49, 59, 55, 70, 0, 6, 0,
+  107, 72, 79, 77, 51, 0, 115, 7, 0, 27, 91, 49, 59, 51, 72, 0, 6, 0, 107, 72,
+  79, 77, 52, 0, 115, 7, 0, 27, 91, 49, 59, 52, 72, 0, 6, 0, 107, 72, 79, 77,
+  53, 0, 115, 7, 0, 27, 91, 49, 59, 53, 72, 0, 6, 0, 107, 72, 79, 77, 54, 0,
+  115, 7, 0, 27, 91, 49, 59, 54, 72, 0, 6, 0, 107, 72, 79, 77, 55, 0, 115, 7,
+  0, 27, 91, 49, 59, 55, 72, 0, 5, 0, 107, 73, 67, 51, 0, 115, 7, 0, 27, 91,
+  50, 59, 51, 126, 0, 5, 0, 107, 73, 67, 52, 0, 115, 7, 0, 27, 91, 50, 59, 52,
+  126, 0, 5, 0, 107, 73, 67, 53, 0, 115, 7, 0, 27, 91, 50, 59, 53, 126, 0, 5,
+  0, 107, 73, 67, 54, 0, 115, 7, 0, 27, 91, 50, 59, 54, 126, 0, 5, 0, 107, 73,
+  67, 55, 0, 115, 7, 0, 27, 91, 50, 59, 55, 126, 0, 6, 0, 107, 78, 88, 84, 51,
+  0, 115, 7, 0, 27, 91, 54, 59, 51, 126, 0, 6, 0, 107, 78, 88, 84, 52, 0, 115,
+  7, 0, 27, 91, 54, 59, 52, 126, 0, 6, 0, 107, 78, 88, 84, 53, 0, 115, 7, 0,
+  27, 91, 54, 59, 53, 126, 0, 6, 0, 107, 78, 88, 84, 54, 0, 115, 7, 0, 27, 91,
+  54, 59, 54, 126, 0, 6, 0, 107, 78, 88, 84, 55, 0, 115, 7, 0, 27, 91, 54, 59,
+  55, 126, 0, 6, 0, 107, 80, 82, 86, 51, 0, 115, 7, 0, 27, 91, 53, 59, 51, 126,
+  0, 6, 0, 107, 80, 82, 86, 52, 0, 115, 7, 0, 27, 91, 53, 59, 52, 126, 0, 6,
+  0, 107, 80, 82, 86, 53, 0, 115, 7, 0, 27, 91, 53, 59, 53, 126, 0, 6, 0, 107,
+  80, 82, 86, 54, 0, 115, 7, 0, 27, 91, 53, 59, 54, 126, 0, 6, 0, 107, 80, 82,
+  86, 55, 0, 115, 7, 0, 27, 91, 53, 59, 55, 126, 0, 3, 0, 84, 83, 0, 115, 5,
+  0, 27, 93, 48, 59, 0, 3, 0, 67, 114, 0, 115, 7, 0, 27, 93, 49, 49, 50, 7,
+  0, 3, 0, 67, 115, 0, 115, 12, 0, 27, 93, 49, 50, 59, 37, 112, 49, 37, 115, 7,
+  0, 3, 0, 77, 115, 0, 115, 18, 0, 27, 93, 53, 50, 59, 37, 112, 49, 37, 115, 59,
+  37, 112, 50, 37, 115, 7, 0, 3, 0, 83, 101, 0, 115, 6, 0, 27, 91, 50, 32, 113,
+  0, 3, 0, 83, 115, 0, 115, 10, 0, 27, 91, 37, 112, 49, 37, 100, 32, 113, 0, 3,
+  0, 98, 115, 0, 102, 1, 3, 0, 112, 116, 0, 102, 1, 3, 0, 71, 48, 0, 102, 1,
+  3, 0, 85, 56, 0, 110, 1, 0, 3, 0, 69, 48, 0, 115, 4, 0, 27, 40, 66, 0,
+  3, 0, 83, 48, 0, 115, 8, 0, 27, 40, 37, 112, 49, 37, 99, 0, 3, 0, 65, 88,
+  0, 102, 1
+};
+#else
 static const char terminfo[] = {
     26, 1, 31, 0, 43, 0, 15, 0, 105, 1, -115, 4, 116, 109, 117, 120, 124, 116, 109, 117,
     120, 32, 116, 101, 114, 109, 105, 110, 97, 108, 32, 109, 117, 108, 116, 105, 112, 108, 101, 120,
@@ -163,6 +313,7 @@ static const char terminfo[] = {
     85, 80, 55, 0, 107, 97, 50, 0, 107, 98, 49, 0, 107, 98, 51, 0, 107, 99, 50, 0,
     114, 109, 120, 120, 0, 115, 109, 120, 120, 0, 120, 109, 0
 };
+#endif
 
 static void setup(void);
 
@@ -178,7 +329,11 @@ int main(void) {
     if (!dt) {
         bail_out(strerror(e));
     }
+#ifdef USE_NETBSD_CURSES
+    unibi_term *ut = unibi_from_nbc_mem(terminfo, sizeof terminfo);
+#else
     unibi_term *ut = unibi_from_mem(terminfo, sizeof terminfo);
+#endif
     e = errno;
     ok(ut != NULL, "terminfo loaded");
     if (!ut) {
@@ -240,14 +395,22 @@ int main(void) {
     ok(unibi_get_bool(ut, unibi_semi_auto_right_margin) == 0, "semi_auto_right_margin = false");
     ok(unibi_get_bool(ut, unibi_cpi_changes_res) == 0, "cpi_changes_res = false");
     ok(unibi_get_bool(ut, unibi_lpi_changes_res) == 0, "lpi_changes_res = false");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_bool(ut, unibi_backspaces_with_bs) == 0, "backspaces_with_bs = false");
+#else
     ok(unibi_get_bool(ut, unibi_backspaces_with_bs) == 1, "backspaces_with_bs = true");
     unibi_set_bool(dt, unibi_backspaces_with_bs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_crt_no_scrolling) == 0, "crt_no_scrolling = false");
     ok(unibi_get_bool(ut, unibi_no_correctly_working_cr) == 0, "no_correctly_working_cr = false");
     ok(unibi_get_bool(ut, unibi_gnu_has_meta_key) == 0, "gnu_has_meta_key = false");
     ok(unibi_get_bool(ut, unibi_linefeed_is_newline) == 0, "linefeed_is_newline = false");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_bool(ut, unibi_has_hardware_tabs) == 0, "has_hardware_tabs = false");
+#else
     ok(unibi_get_bool(ut, unibi_has_hardware_tabs) == 1, "has_hardware_tabs = true");
     unibi_set_bool(dt, unibi_has_hardware_tabs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_return_does_clr_eol) == 0, "return_does_clr_eol = false");
 
     note("numeric capabilities");
@@ -313,8 +476,12 @@ int main(void) {
     unibi_set_str(dt, unibi_clr_eol, "\033[K");
     ok(strcmp(unibi_get_str(ut, unibi_clr_eos), "\033[J") == 0, "clr_eos = \"%s\"", "\\033[J");
     unibi_set_str(dt, unibi_clr_eos, "\033[J");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_column_address) == NULL, "column_address = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_column_address), "\033[%i%p1%dG") == 0, "column_address = \"%s\"", "\\033[%i%p1%dG");
     unibi_set_str(dt, unibi_column_address, "\033[%i%p1%dG");
+#endif
     ok(unibi_get_str(ut, unibi_command_character) == NULL, "command_character = null");
     ok(strcmp(unibi_get_str(ut, unibi_cursor_address), "\033[%i%p1%d;%p2%dH") == 0, "cursor_address = \"%s\"", "\\033[%i%p1%d;%p2%dH");
     unibi_set_str(dt, unibi_cursor_address, "\033[%i%p1%d;%p2%dH");
@@ -356,8 +523,12 @@ int main(void) {
     unibi_set_str(dt, unibi_enter_dim_mode, "\033[2m");
     ok(strcmp(unibi_get_str(ut, unibi_enter_insert_mode), "\033[4h") == 0, "enter_insert_mode = \"%s\"", "\\033[4h");
     unibi_set_str(dt, unibi_enter_insert_mode, "\033[4h");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_enter_secure_mode) == NULL, "enter_secure_mode = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_enter_secure_mode), "\033[8m") == 0, "enter_secure_mode = \"%s\"", "\\033[8m");
     unibi_set_str(dt, unibi_enter_secure_mode, "\033[8m");
+#endif
     ok(unibi_get_str(ut, unibi_enter_protected_mode) == NULL, "enter_protected_mode = null");
     ok(strcmp(unibi_get_str(ut, unibi_enter_reverse_mode), "\033[7m") == 0, "enter_reverse_mode = \"%s\"", "\\033[7m");
     unibi_set_str(dt, unibi_enter_reverse_mode, "\033[7m");
@@ -476,8 +647,12 @@ int main(void) {
     unibi_set_str(dt, unibi_parm_down_cursor, "\033[%p1%dB");
     ok(strcmp(unibi_get_str(ut, unibi_parm_ich), "\033[%p1%d@") == 0, "parm_ich = \"%s\"", "\\033[%p1%d@");
     unibi_set_str(dt, unibi_parm_ich, "\033[%p1%d@");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_parm_index) == NULL, "parm_index = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_parm_index), "\033[%p1%dS") == 0, "parm_index = \"%s\"", "\\033[%p1%dS");
     unibi_set_str(dt, unibi_parm_index, "\033[%p1%dS");
+#endif
     ok(strcmp(unibi_get_str(ut, unibi_parm_insert_line), "\033[%p1%dL") == 0, "parm_insert_line = \"%s\"", "\\033[%p1%dL");
     unibi_set_str(dt, unibi_parm_insert_line, "\033[%p1%dL");
     ok(strcmp(unibi_get_str(ut, unibi_parm_left_cursor), "\033[%p1%dD") == 0, "parm_left_cursor = \"%s\"", "\\033[%p1%dD");
@@ -501,16 +676,20 @@ int main(void) {
     ok(unibi_get_str(ut, unibi_reset_file) == NULL, "reset_file = null");
     ok(strcmp(unibi_get_str(ut, unibi_restore_cursor), "\0338") == 0, "restore_cursor = \"%s\"", "\\0338");
     unibi_set_str(dt, unibi_restore_cursor, "\0338");
+#ifdef USE_NETBSD_CURSES
+    ok(unibi_get_str(ut, unibi_row_address) == NULL, "row_address = null");
+#else
     ok(strcmp(unibi_get_str(ut, unibi_row_address), "\033[%i%p1%dd") == 0, "row_address = \"%s\"", "\\033[%i%p1%dd");
     unibi_set_str(dt, unibi_row_address, "\033[%i%p1%dd");
+#endif
     ok(strcmp(unibi_get_str(ut, unibi_save_cursor), "\0337") == 0, "save_cursor = \"%s\"", "\\0337");
     unibi_set_str(dt, unibi_save_cursor, "\0337");
     ok(strcmp(unibi_get_str(ut, unibi_scroll_forward), "\012") == 0, "scroll_forward = \"%s\"", "\\012");
     unibi_set_str(dt, unibi_scroll_forward, "\012");
     ok(strcmp(unibi_get_str(ut, unibi_scroll_reverse), "\033M") == 0, "scroll_reverse = \"%s\"", "\\033M");
     unibi_set_str(dt, unibi_scroll_reverse, "\033M");
-    ok(strcmp(unibi_get_str(ut, unibi_set_attributes), "\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;") == 0, "set_attributes = \"%s\"", "\\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\\016%e\\017%;");
-    unibi_set_str(dt, unibi_set_attributes, "\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;");
+    ok(strcmp(unibi_get_str(ut, unibi_set_attributes), "\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;") == 0, "set_attributes = \"%s\"", "\\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\\016%e\\017%;");
+    unibi_set_str(dt, unibi_set_attributes, "\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;");
     ok(strcmp(unibi_get_str(ut, unibi_set_tab), "\033H") == 0, "set_tab = \"%s\"", "\\033H");
     unibi_set_str(dt, unibi_set_tab, "\033H");
     ok(unibi_get_str(ut, unibi_set_window) == NULL, "set_window = null");
@@ -871,6 +1050,22 @@ int main(void) {
 
     note("extended boolean capabilities");
     {
+#ifdef USE_NETBSD_CURSES
+        const size_t n_ext = unibi_count_ext_bool(ut);
+        ok(n_ext == 4, "#ext_bool = 4");
+        ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
+        ok(0 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 0), "bs") == 0, "ext_bool[0].name = \"%s\"", "bs");
+        unibi_add_ext_bool(dt, "bs", 1);
+        ok(1 < n_ext && unibi_get_ext_bool(ut, 1) == 1, "ext_bool[1].value = 1");
+        ok(1 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 1), "pt") == 0, "ext_bool[1].name = \"%s\"", "pt");
+        unibi_add_ext_bool(dt, "pt", 1);
+        ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 1, "ext_bool[2].value = 1");
+        ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "G0") == 0, "ext_bool[2].name = \"%s\"", "G0");
+        unibi_add_ext_bool(dt, "G0", 1);
+        ok(3 < n_ext && unibi_get_ext_bool(ut, 3) == 1, "ext_bool[3].value = 1");
+        ok(3 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 3), "AX") == 0, "ext_bool[3].name = \"%s\"", "AX");
+        unibi_add_ext_bool(dt, "AX", 1);
+#else
         const size_t n_ext = unibi_count_ext_bool(ut);
         ok(n_ext == 3, "#ext_bool = 3");
         ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
@@ -882,6 +1077,7 @@ int main(void) {
         ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 0, "ext_bool[2].value = 0");
         ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "XT") == 0, "ext_bool[2].name = \"%s\"", "XT");
         unibi_add_ext_bool(dt, "XT", 0);
+#endif
     }
 
     note("extended numeric capabilities");
@@ -895,6 +1091,190 @@ int main(void) {
 
     note("extended string capabilities");
     {
+#ifdef USE_NETBSD_CURSES
+        const size_t n_ext = unibi_count_ext_str(ut);
+        ok(n_ext == 60, "#ext_str = 60");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033[1;2B") == 0, "ext_str[0].value = \"%s\"", "\\033[1;2B");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str_name(ut, 0), "kDN") == 0, "ext_str[0].name = \"%s\"", "kDN");
+        unibi_add_ext_str(dt, "kDN", "\033[1;2B");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str(ut, 1), "\033[1;3B") == 0, "ext_str[1].value = \"%s\"", "\\033[1;3B");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str_name(ut, 1), "kDN3") == 0, "ext_str[1].name = \"%s\"", "kDN3");
+        unibi_add_ext_str(dt, "kDN3", "\033[1;3B");
+        ok(2 < n_ext && strcmp(unibi_get_ext_str(ut, 2), "\033[1;4B") == 0, "ext_str[2].value = \"%s\"", "\\033[1;4B");
+        ok(2 < n_ext && strcmp(unibi_get_ext_str_name(ut, 2), "kDN4") == 0, "ext_str[2].name = \"%s\"", "kDN4");
+        unibi_add_ext_str(dt, "kDN4", "\033[1;4B");
+        ok(3 < n_ext && strcmp(unibi_get_ext_str(ut, 3), "\033[1;5B") == 0, "ext_str[3].value = \"%s\"", "\\033[1;5B");
+        ok(3 < n_ext && strcmp(unibi_get_ext_str_name(ut, 3), "kDN5") == 0, "ext_str[3].name = \"%s\"", "kDN5");
+        unibi_add_ext_str(dt, "kDN5", "\033[1;5B");
+        ok(4 < n_ext && strcmp(unibi_get_ext_str(ut, 4), "\033[1;6B") == 0, "ext_str[4].value = \"%s\"", "\\033[1;6B");
+        ok(4 < n_ext && strcmp(unibi_get_ext_str_name(ut, 4), "kDN6") == 0, "ext_str[4].name = \"%s\"", "kDN6");
+        unibi_add_ext_str(dt, "kDN6", "\033[1;6B");
+        ok(5 < n_ext && strcmp(unibi_get_ext_str(ut, 5), "\033[1;7B") == 0, "ext_str[5].value = \"%s\"", "\\033[1;7B");
+        ok(5 < n_ext && strcmp(unibi_get_ext_str_name(ut, 5), "kDN7") == 0, "ext_str[5].name = \"%s\"", "kDN7");
+        unibi_add_ext_str(dt, "kDN7", "\033[1;7B");
+        ok(6 < n_ext && strcmp(unibi_get_ext_str(ut, 6), "\033[1;3D") == 0, "ext_str[6].value = \"%s\"", "\\033[1;3D");
+        ok(6 < n_ext && strcmp(unibi_get_ext_str_name(ut, 6), "kLFT3") == 0, "ext_str[6].name = \"%s\"", "kLFT3");
+        unibi_add_ext_str(dt, "kLFT3", "\033[1;3D");
+        ok(7 < n_ext && strcmp(unibi_get_ext_str(ut, 7), "\033[1;4D") == 0, "ext_str[7].value = \"%s\"", "\\033[1;4D");
+        ok(7 < n_ext && strcmp(unibi_get_ext_str_name(ut, 7), "kLFT4") == 0, "ext_str[7].name = \"%s\"", "kLFT4");
+        unibi_add_ext_str(dt, "kLFT4", "\033[1;4D");
+        ok(8 < n_ext && strcmp(unibi_get_ext_str(ut, 8), "\033[1;5D") == 0, "ext_str[8].value = \"%s\"", "\\033[1;5D");
+        ok(8 < n_ext && strcmp(unibi_get_ext_str_name(ut, 8), "kLFT5") == 0, "ext_str[8].name = \"%s\"", "kLFT5");
+        unibi_add_ext_str(dt, "kLFT5", "\033[1;5D");
+        ok(9 < n_ext && strcmp(unibi_get_ext_str(ut, 9), "\033[1;6D") == 0, "ext_str[9].value = \"%s\"", "\\033[1;6D");
+        ok(9 < n_ext && strcmp(unibi_get_ext_str_name(ut, 9), "kLFT6") == 0, "ext_str[9].name = \"%s\"", "kLFT6");
+        unibi_add_ext_str(dt, "kLFT6", "\033[1;6D");
+        ok(10 < n_ext && strcmp(unibi_get_ext_str(ut, 10), "\033[1;7D") == 0, "ext_str[10].value = \"%s\"", "\\033[1;7D");
+        ok(10 < n_ext && strcmp(unibi_get_ext_str_name(ut, 10), "kLFT7") == 0, "ext_str[10].name = \"%s\"", "kLFT7");
+        unibi_add_ext_str(dt, "kLFT7", "\033[1;7D");
+        ok(11 < n_ext && strcmp(unibi_get_ext_str(ut, 11), "\033[1;3C") == 0, "ext_str[11].value = \"%s\"", "\\033[1;3C");
+        ok(11 < n_ext && strcmp(unibi_get_ext_str_name(ut, 11), "kRIT3") == 0, "ext_str[11].name = \"%s\"", "kRIT3");
+        unibi_add_ext_str(dt, "kRIT3", "\033[1;3C");
+        ok(12 < n_ext && strcmp(unibi_get_ext_str(ut, 12), "\033[1;4C") == 0, "ext_str[12].value = \"%s\"", "\\033[1;4C");
+        ok(12 < n_ext && strcmp(unibi_get_ext_str_name(ut, 12), "kRIT4") == 0, "ext_str[12].name = \"%s\"", "kRIT4");
+        unibi_add_ext_str(dt, "kRIT4", "\033[1;4C");
+        ok(13 < n_ext && strcmp(unibi_get_ext_str(ut, 13), "\033[1;5C") == 0, "ext_str[13].value = \"%s\"", "\\033[1;5C");
+        ok(13 < n_ext && strcmp(unibi_get_ext_str_name(ut, 13), "kRIT5") == 0, "ext_str[13].name = \"%s\"", "kRIT5");
+        unibi_add_ext_str(dt, "kRIT5", "\033[1;5C");
+        ok(14 < n_ext && strcmp(unibi_get_ext_str(ut, 14), "\033[1;6C") == 0, "ext_str[14].value = \"%s\"", "\\033[1;6C");
+        ok(14 < n_ext && strcmp(unibi_get_ext_str_name(ut, 14), "kRIT6") == 0, "ext_str[14].name = \"%s\"", "kRIT6");
+        unibi_add_ext_str(dt, "kRIT6", "\033[1;6C");
+        ok(15 < n_ext && strcmp(unibi_get_ext_str(ut, 15), "\033[1;7C") == 0, "ext_str[15].value = \"%s\"", "\\033[1;7C");
+        ok(15 < n_ext && strcmp(unibi_get_ext_str_name(ut, 15), "kRIT7") == 0, "ext_str[15].name = \"%s\"", "kRIT7");
+        unibi_add_ext_str(dt, "kRIT7", "\033[1;7C");
+        ok(16 < n_ext && strcmp(unibi_get_ext_str(ut, 16), "\033[1;2A") == 0, "ext_str[16].value = \"%s\"", "\\033[1;2A");
+        ok(16 < n_ext && strcmp(unibi_get_ext_str_name(ut, 16), "kUP") == 0, "ext_str[16].name = \"%s\"", "kUP");
+        unibi_add_ext_str(dt, "kUP", "\033[1;2A");
+        ok(17 < n_ext && strcmp(unibi_get_ext_str(ut, 17), "\033[1;3A") == 0, "ext_str[17].value = \"%s\"", "\\033[1;3A");
+        ok(17 < n_ext && strcmp(unibi_get_ext_str_name(ut, 17), "kUP3") == 0, "ext_str[17].name = \"%s\"", "kUP3");
+        unibi_add_ext_str(dt, "kUP3", "\033[1;3A");
+        ok(18 < n_ext && strcmp(unibi_get_ext_str(ut, 18), "\033[1;4A") == 0, "ext_str[18].value = \"%s\"", "\\033[1;4A");
+        ok(18 < n_ext && strcmp(unibi_get_ext_str_name(ut, 18), "kUP4") == 0, "ext_str[18].name = \"%s\"", "kUP4");
+        unibi_add_ext_str(dt, "kUP4", "\033[1;4A");
+        ok(19 < n_ext && strcmp(unibi_get_ext_str(ut, 19), "\033[1;5A") == 0, "ext_str[19].value = \"%s\"", "\\033[1;5A");
+        ok(19 < n_ext && strcmp(unibi_get_ext_str_name(ut, 19), "kUP5") == 0, "ext_str[19].name = \"%s\"", "kUP5");
+        unibi_add_ext_str(dt, "kUP5", "\033[1;5A");
+        ok(20 < n_ext && strcmp(unibi_get_ext_str(ut, 20), "\033[1;6A") == 0, "ext_str[20].value = \"%s\"", "\\033[1;6A");
+        ok(20 < n_ext && strcmp(unibi_get_ext_str_name(ut, 20), "kUP6") == 0, "ext_str[20].name = \"%s\"", "kUP6");
+        unibi_add_ext_str(dt, "kUP6", "\033[1;6A");
+        ok(21 < n_ext && strcmp(unibi_get_ext_str(ut, 21), "\033[1;7A") == 0, "ext_str[21].value = \"%s\"", "\\033[1;7A");
+        ok(21 < n_ext && strcmp(unibi_get_ext_str_name(ut, 21), "kUP7") == 0, "ext_str[21].name = \"%s\"", "kUP7");
+        unibi_add_ext_str(dt, "kUP7", "\033[1;7A");
+        ok(22 < n_ext && strcmp(unibi_get_ext_str(ut, 22), "\033[3;3~") == 0, "ext_str[22].value = \"%s\"", "\\033[3;3~");
+        ok(22 < n_ext && strcmp(unibi_get_ext_str_name(ut, 22), "kDC3") == 0, "ext_str[22].name = \"%s\"", "kDC3");
+        unibi_add_ext_str(dt, "kDC3", "\033[3;3~");
+        ok(23 < n_ext && strcmp(unibi_get_ext_str(ut, 23), "\033[3;4~") == 0, "ext_str[23].value = \"%s\"", "\\033[3;4~");
+        ok(23 < n_ext && strcmp(unibi_get_ext_str_name(ut, 23), "kDC4") == 0, "ext_str[23].name = \"%s\"", "kDC4");
+        unibi_add_ext_str(dt, "kDC4", "\033[3;4~");
+        ok(24 < n_ext && strcmp(unibi_get_ext_str(ut, 24), "\033[3;5~") == 0, "ext_str[24].value = \"%s\"", "\\033[3;5~");
+        ok(24 < n_ext && strcmp(unibi_get_ext_str_name(ut, 24), "kDC5") == 0, "ext_str[24].name = \"%s\"", "kDC5");
+        unibi_add_ext_str(dt, "kDC5", "\033[3;5~");
+        ok(25 < n_ext && strcmp(unibi_get_ext_str(ut, 25), "\033[3;6~") == 0, "ext_str[25].value = \"%s\"", "\\033[3;6~");
+        ok(25 < n_ext && strcmp(unibi_get_ext_str_name(ut, 25), "kDC6") == 0, "ext_str[25].name = \"%s\"", "kDC6");
+        unibi_add_ext_str(dt, "kDC6", "\033[3;6~");
+        ok(26 < n_ext && strcmp(unibi_get_ext_str(ut, 26), "\033[3;7~") == 0, "ext_str[26].value = \"%s\"", "\\033[3;7~");
+        ok(26 < n_ext && strcmp(unibi_get_ext_str_name(ut, 26), "kDC7") == 0, "ext_str[26].name = \"%s\"", "kDC7");
+        unibi_add_ext_str(dt, "kDC7", "\033[3;7~");
+        ok(27 < n_ext && strcmp(unibi_get_ext_str(ut, 27), "\033[1;3F") == 0, "ext_str[27].value = \"%s\"", "\\033[1;3F");
+        ok(27 < n_ext && strcmp(unibi_get_ext_str_name(ut, 27), "kEND3") == 0, "ext_str[27].name = \"%s\"", "kEND3");
+        unibi_add_ext_str(dt, "kEND3", "\033[1;3F");
+        ok(28 < n_ext && strcmp(unibi_get_ext_str(ut, 28), "\033[1;4F") == 0, "ext_str[28].value = \"%s\"", "\\033[1;4F");
+        ok(28 < n_ext && strcmp(unibi_get_ext_str_name(ut, 28), "kEND4") == 0, "ext_str[28].name = \"%s\"", "kEND4");
+        unibi_add_ext_str(dt, "kEND4", "\033[1;4F");
+        ok(29 < n_ext && strcmp(unibi_get_ext_str(ut, 29), "\033[1;5F") == 0, "ext_str[29].value = \"%s\"", "\\033[1;5F");
+        ok(29 < n_ext && strcmp(unibi_get_ext_str_name(ut, 29), "kEND5") == 0, "ext_str[29].name = \"%s\"", "kEND5");
+        unibi_add_ext_str(dt, "kEND5", "\033[1;5F");
+        ok(30 < n_ext && strcmp(unibi_get_ext_str(ut, 30), "\033[1;6F") == 0, "ext_str[30].value = \"%s\"", "\\033[1;6F");
+        ok(30 < n_ext && strcmp(unibi_get_ext_str_name(ut, 30), "kEND6") == 0, "ext_str[30].name = \"%s\"", "kEND6");
+        unibi_add_ext_str(dt, "kEND6", "\033[1;6F");
+        ok(31 < n_ext && strcmp(unibi_get_ext_str(ut, 31), "\033[1;7F") == 0, "ext_str[31].value = \"%s\"", "\\033[1;7F");
+        ok(31 < n_ext && strcmp(unibi_get_ext_str_name(ut, 31), "kEND7") == 0, "ext_str[31].name = \"%s\"", "kEND7");
+        unibi_add_ext_str(dt, "kEND7", "\033[1;7F");
+        ok(32 < n_ext && strcmp(unibi_get_ext_str(ut, 32), "\033[1;3H") == 0, "ext_str[32].value = \"%s\"", "\\033[1;3H");
+        ok(32 < n_ext && strcmp(unibi_get_ext_str_name(ut, 32), "kHOM3") == 0, "ext_str[32].name = \"%s\"", "kHOM3");
+        unibi_add_ext_str(dt, "kHOM3", "\033[1;3H");
+        ok(33 < n_ext && strcmp(unibi_get_ext_str(ut, 33), "\033[1;4H") == 0, "ext_str[33].value = \"%s\"", "\\033[1;4H");
+        ok(33 < n_ext && strcmp(unibi_get_ext_str_name(ut, 33), "kHOM4") == 0, "ext_str[33].name = \"%s\"", "kHOM4");
+        unibi_add_ext_str(dt, "kHOM4", "\033[1;4H");
+        ok(34 < n_ext && strcmp(unibi_get_ext_str(ut, 34), "\033[1;5H") == 0, "ext_str[34].value = \"%s\"", "\\033[1;5H");
+        ok(34 < n_ext && strcmp(unibi_get_ext_str_name(ut, 34), "kHOM5") == 0, "ext_str[34].name = \"%s\"", "kHOM5");
+        unibi_add_ext_str(dt, "kHOM5", "\033[1;5H");
+        ok(35 < n_ext && strcmp(unibi_get_ext_str(ut, 35), "\033[1;6H") == 0, "ext_str[35].value = \"%s\"", "\\033[1;6H");
+        ok(35 < n_ext && strcmp(unibi_get_ext_str_name(ut, 35), "kHOM6") == 0, "ext_str[35].name = \"%s\"", "kHOM6");
+        unibi_add_ext_str(dt, "kHOM6", "\033[1;6H");
+        ok(36 < n_ext && strcmp(unibi_get_ext_str(ut, 36), "\033[1;7H") == 0, "ext_str[36].value = \"%s\"", "\\033[1;7H");
+        ok(36 < n_ext && strcmp(unibi_get_ext_str_name(ut, 36), "kHOM7") == 0, "ext_str[36].name = \"%s\"", "kHOM7");
+        unibi_add_ext_str(dt, "kHOM7", "\033[1;7H");
+        ok(37 < n_ext && strcmp(unibi_get_ext_str(ut, 37), "\033[2;3~") == 0, "ext_str[37].value = \"%s\"", "\\033[2;3~");
+        ok(37 < n_ext && strcmp(unibi_get_ext_str_name(ut, 37), "kIC3") == 0, "ext_str[37].name = \"%s\"", "kIC3");
+        unibi_add_ext_str(dt, "kIC3", "\033[2;3~");
+        ok(38 < n_ext && strcmp(unibi_get_ext_str(ut, 38), "\033[2;4~") == 0, "ext_str[38].value = \"%s\"", "\\033[2;4~");
+        ok(38 < n_ext && strcmp(unibi_get_ext_str_name(ut, 38), "kIC4") == 0, "ext_str[38].name = \"%s\"", "kIC4");
+        unibi_add_ext_str(dt, "kIC4", "\033[2;4~");
+        ok(39 < n_ext && strcmp(unibi_get_ext_str(ut, 39), "\033[2;5~") == 0, "ext_str[39].value = \"%s\"", "\\033[2;5~");
+        ok(39 < n_ext && strcmp(unibi_get_ext_str_name(ut, 39), "kIC5") == 0, "ext_str[39].name = \"%s\"", "kIC5");
+        unibi_add_ext_str(dt, "kIC5", "\033[2;5~");
+        ok(40 < n_ext && strcmp(unibi_get_ext_str(ut, 40), "\033[2;6~") == 0, "ext_str[40].value = \"%s\"", "\\033[2;6~");
+        ok(40 < n_ext && strcmp(unibi_get_ext_str_name(ut, 40), "kIC6") == 0, "ext_str[40].name = \"%s\"", "kIC6");
+        unibi_add_ext_str(dt, "kIC6", "\033[2;6~");
+        ok(41 < n_ext && strcmp(unibi_get_ext_str(ut, 41), "\033[2;7~") == 0, "ext_str[41].value = \"%s\"", "\\033[2;7~");
+        ok(41 < n_ext && strcmp(unibi_get_ext_str_name(ut, 41), "kIC7") == 0, "ext_str[41].name = \"%s\"", "kIC7");
+        unibi_add_ext_str(dt, "kIC7", "\033[2;7~");
+        ok(42 < n_ext && strcmp(unibi_get_ext_str(ut, 42), "\033[6;3~") == 0, "ext_str[42].value = \"%s\"", "\\033[6;3~");
+        ok(42 < n_ext && strcmp(unibi_get_ext_str_name(ut, 42), "kNXT3") == 0, "ext_str[42].name = \"%s\"", "kNXT3");
+        unibi_add_ext_str(dt, "kNXT3", "\033[6;3~");
+        ok(43 < n_ext && strcmp(unibi_get_ext_str(ut, 43), "\033[6;4~") == 0, "ext_str[43].value = \"%s\"", "\\033[6;4~");
+        ok(43 < n_ext && strcmp(unibi_get_ext_str_name(ut, 43), "kNXT4") == 0, "ext_str[43].name = \"%s\"", "kNXT4");
+        unibi_add_ext_str(dt, "kNXT4", "\033[6;4~");
+        ok(44 < n_ext && strcmp(unibi_get_ext_str(ut, 44), "\033[6;5~") == 0, "ext_str[44].value = \"%s\"", "\\033[6;5~");
+        ok(44 < n_ext && strcmp(unibi_get_ext_str_name(ut, 44), "kNXT5") == 0, "ext_str[44].name = \"%s\"", "kNXT5");
+        unibi_add_ext_str(dt, "kNXT5", "\033[6;5~");
+        ok(45 < n_ext && strcmp(unibi_get_ext_str(ut, 45), "\033[6;6~") == 0, "ext_str[45].value = \"%s\"", "\\033[6;6~");
+        ok(45 < n_ext && strcmp(unibi_get_ext_str_name(ut, 45), "kNXT6") == 0, "ext_str[45].name = \"%s\"", "kNXT6");
+        unibi_add_ext_str(dt, "kNXT6", "\033[6;6~");
+        ok(46 < n_ext && strcmp(unibi_get_ext_str(ut, 46), "\033[6;7~") == 0, "ext_str[46].value = \"%s\"", "\\033[6;7~");
+        ok(46 < n_ext && strcmp(unibi_get_ext_str_name(ut, 46), "kNXT7") == 0, "ext_str[46].name = \"%s\"", "kNXT7");
+        unibi_add_ext_str(dt, "kNXT7", "\033[6;7~");
+        ok(47 < n_ext && strcmp(unibi_get_ext_str(ut, 47), "\033[5;3~") == 0, "ext_str[47].value = \"%s\"", "\\033[5;3~");
+        ok(47 < n_ext && strcmp(unibi_get_ext_str_name(ut, 47), "kPRV3") == 0, "ext_str[47].name = \"%s\"", "kPRV3");
+        unibi_add_ext_str(dt, "kPRV3", "\033[5;3~");
+        ok(48 < n_ext && strcmp(unibi_get_ext_str(ut, 48), "\033[5;4~") == 0, "ext_str[48].value = \"%s\"", "\\033[5;4~");
+        ok(48 < n_ext && strcmp(unibi_get_ext_str_name(ut, 48), "kPRV4") == 0, "ext_str[48].name = \"%s\"", "kPRV4");
+        unibi_add_ext_str(dt, "kPRV4", "\033[5;4~");
+        ok(49 < n_ext && strcmp(unibi_get_ext_str(ut, 49), "\033[5;5~") == 0, "ext_str[49].value = \"%s\"", "\\033[5;5~");
+        ok(49 < n_ext && strcmp(unibi_get_ext_str_name(ut, 49), "kPRV5") == 0, "ext_str[49].name = \"%s\"", "kPRV5");
+        unibi_add_ext_str(dt, "kPRV5", "\033[5;5~");
+        ok(50 < n_ext && strcmp(unibi_get_ext_str(ut, 50), "\033[5;6~") == 0, "ext_str[50].value = \"%s\"", "\\033[5;6~");
+        ok(50 < n_ext && strcmp(unibi_get_ext_str_name(ut, 50), "kPRV6") == 0, "ext_str[50].name = \"%s\"", "kPRV6");
+        unibi_add_ext_str(dt, "kPRV6", "\033[5;6~");
+        ok(51 < n_ext && strcmp(unibi_get_ext_str(ut, 51), "\033[5;7~") == 0, "ext_str[51].value = \"%s\"", "\\033[5;7~");
+        ok(51 < n_ext && strcmp(unibi_get_ext_str_name(ut, 51), "kPRV7") == 0, "ext_str[51].name = \"%s\"", "kPRV7");
+        unibi_add_ext_str(dt, "kPRV7", "\033[5;7~");
+        ok(52 < n_ext && strcmp(unibi_get_ext_str(ut, 52), "\033]0;") == 0, "ext_str[52].value = \"%s\"", "\\033]0;");
+        ok(52 < n_ext && strcmp(unibi_get_ext_str_name(ut, 52), "TS") == 0, "ext_str[52].name = \"%s\"", "TS");
+        unibi_add_ext_str(dt, "TS", "\033]0;");
+        ok(53 < n_ext && strcmp(unibi_get_ext_str(ut, 53), "\033]112\007") == 0, "ext_str[53].value = \"%s\"", "\\033]112\\007");
+        ok(53 < n_ext && strcmp(unibi_get_ext_str_name(ut, 53), "Cr") == 0, "ext_str[53].name = \"%s\"", "Cr");
+        unibi_add_ext_str(dt, "Cr", "\033]112\007");
+        ok(54 < n_ext && strcmp(unibi_get_ext_str(ut, 54), "\033]12;%p1%s\007") == 0, "ext_str[54].value = \"%s\"", "\\033]12;%p1%s\\007");
+        ok(54 < n_ext && strcmp(unibi_get_ext_str_name(ut, 54), "Cs") == 0, "ext_str[54].name = \"%s\"", "Cs");
+        unibi_add_ext_str(dt, "Cs", "\033]12;%p1%s\007");
+        ok(55 < n_ext && strcmp(unibi_get_ext_str(ut, 55), "\033]52;%p1%s;%p2%s\007") == 0, "ext_str[55].value = \"%s\"", "\\033]52;%p1%s;%p2%s\\007");
+        ok(55 < n_ext && strcmp(unibi_get_ext_str_name(ut, 55), "Ms") == 0, "ext_str[55].name = \"%s\"", "Ms");
+        unibi_add_ext_str(dt, "Ms", "\033]52;%p1%s;%p2%s\007");
+        ok(56 < n_ext && strcmp(unibi_get_ext_str(ut, 56), "\033[2 q") == 0, "ext_str[56].value = \"%s\"", "\\033[2 q");
+        ok(56 < n_ext && strcmp(unibi_get_ext_str_name(ut, 56), "Se") == 0, "ext_str[56].name = \"%s\"", "Se");
+        unibi_add_ext_str(dt, "Se", "\033[2 q");
+        ok(57 < n_ext && strcmp(unibi_get_ext_str(ut, 57), "\033[%p1%d q") == 0, "ext_str[57].value = \"%s\"", "\\033[%p1%d q");
+        ok(57 < n_ext && strcmp(unibi_get_ext_str_name(ut, 57), "Ss") == 0, "ext_str[57].name = \"%s\"", "Ss");
+        unibi_add_ext_str(dt, "Ss", "\033[%p1%d q");
+        ok(58 < n_ext && strcmp(unibi_get_ext_str(ut, 58), "\033(B") == 0, "ext_str[58].value = \"%s\"", "\\033(B");
+        ok(58 < n_ext && strcmp(unibi_get_ext_str_name(ut, 58), "E0") == 0, "ext_str[58].name = \"%s\"", "E0");
+        unibi_add_ext_str(dt, "E0", "\033(B");
+        ok(59 < n_ext && strcmp(unibi_get_ext_str(ut, 59), "\033(%p1%c") == 0, "ext_str[59].value = \"%s\"", "\\033(%p1%c");
+        ok(59 < n_ext && strcmp(unibi_get_ext_str_name(ut, 59), "S0") == 0, "ext_str[59].name = \"%s\"", "S0");
+        unibi_add_ext_str(dt, "S0", "\033(%p1%c");
+#else
         const size_t n_ext = unibi_count_ext_str(ut);
         ok(n_ext == 73, "#ext_str = 73");
         ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033]112\007") == 0, "ext_str[0].value = \"%s\"", "\\033]112\\007");
@@ -1116,8 +1496,19 @@ int main(void) {
         ok(72 < n_ext && unibi_get_ext_str(ut, 72) == NULL, "ext_str[72].value = null");
         unibi_add_ext_str(dt, "xm", NULL);
         ok(72 < n_ext && strcmp(unibi_get_ext_str_name(ut, 72), "xm") == 0, "ext_str[72].name = \"%s\"", "xm");
+#endif
     }
 
+#ifdef USE_NETBSD_CURSES
+    {
+        char buf1[4096];
+        char buf2[4096];
+        size_t r1 = unibi_dump(ut, buf1, sizeof buf1);
+        size_t r2 = unibi_dump(dt, buf2, sizeof buf2);
+        ok(r1 == r2, "dump: read size == dummy size");
+        ok(memcmp(buf1, buf2, r1) == 0, "dump == orig");
+    }
+#else
     {
         char buf[sizeof terminfo];
         size_t r = unibi_dump(ut, buf, sizeof buf);
@@ -1131,6 +1522,7 @@ int main(void) {
         ok(r == sizeof terminfo, "dummy redump size == orig size");
         ok(memcmp(terminfo, buf, sizeof buf) == 0, "dummy redump == orig");
     }
+#endif
 
     unibi_destroy(ut);
     ok(1, "object destroyed");
@@ -1142,5 +1534,9 @@ int main(void) {
 }
 
 static void setup(void) {
+#ifdef USE_NETBSD_CURSES
+    plan(639);
+#else
     plan(665);
+#endif
 }

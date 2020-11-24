@@ -69,8 +69,10 @@ static unibi_term *get_term(const char *s) {
 #endif
     unibi_term *ut;
     if (s) {
-#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
+#ifdef USE_HASHED_DB
         ut = unibi_from_db(s, t);
+#elif defined(USE_NETBSD_CURSES)
+        ut = unibi_from_nbc_db(s, t);
 #else
         ut = unibi_from_file(s);
 #endif

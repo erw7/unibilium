@@ -540,9 +540,11 @@ typedef struct unibi_term unibi_term;
 
 unibi_term *unibi_dummy(void);
 unibi_term *unibi_from_mem(const char *, size_t);
+unibi_term *unibi_from_nbc_mem(const char *, size_t);
 void unibi_destroy(unibi_term *);
 
 size_t unibi_dump(const unibi_term *, char *, size_t);
+size_t unibi_dump_nbc(const unibi_term *, char *, size_t);
 
 const char *unibi_get_name(const unibi_term *);
 void        unibi_set_name(unibi_term *, const char *);
@@ -561,11 +563,9 @@ void        unibi_set_str(unibi_term *, enum unibi_string, const char *);
 
 unibi_term *unibi_from_fp(FILE *);
 unibi_term *unibi_from_fd(int);
-#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
 unibi_term *unibi_from_db(const char *, const char *);
-#else
+unibi_term *unibi_from_nbc_db(const char *, const char *);
 unibi_term *unibi_from_file(const char *);
-#endif
 unibi_term *unibi_from_term(const char *);
 unibi_term *unibi_from_env(void);
 

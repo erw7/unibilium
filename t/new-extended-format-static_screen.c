@@ -5,15 +5,19 @@
 #include <string.h>
 #include "test-simple.c.inc"
 
+#ifdef USE_HASHED_DB
+# define DB_PREFIX ".db"
+#endif
+#ifdef USE_NETBSD_CURSES
+# define DB_PREFIX ".cdb"
+#endif
+
 static void setup(void);
 
 int main(void) {
     int e;
     unibi_term *dt;
 
-#if defined(USE_HASHED_DB) || defined(USE_NETBSD_CURSES)
-    return 0;
-#else
     setup();
 
     dt = unibi_dummy();
@@ -22,7 +26,13 @@ int main(void) {
     if (!dt) {
         bail_out(strerror(e));
     }
+#ifdef USE_HASHED_DB
+    unibi_term *ut = unibi_from_db("t/fixtures/terminfo" DB_PREFIX, "screen");
+#elif defined(USE_NETBSD_CURSES)
+    unibi_term *ut = unibi_from_nbc_db("t/fixtures/terminfo" DB_PREFIX, "screen");
+#else
     unibi_term *ut = unibi_from_file("t/fixtures/s/screen");
+#endif
     e = errno;
     ok(ut != NULL, "terminfo loaded");
     if (!ut) {
@@ -83,14 +93,20 @@ int main(void) {
     ok(unibi_get_bool(ut, unibi_semi_auto_right_margin) == 0, "semi_auto_right_margin = false");
     ok(unibi_get_bool(ut, unibi_cpi_changes_res) == 0, "cpi_changes_res = false");
     ok(unibi_get_bool(ut, unibi_lpi_changes_res) == 0, "lpi_changes_res = false");
+#ifndef USE_NETBSD_CURSES
+    // NetBSD curses does not recognize OT capabilities.
     ok(unibi_get_bool(ut, unibi_backspaces_with_bs) == 1, "backspaces_with_bs = true");
     unibi_set_bool(dt, unibi_backspaces_with_bs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_crt_no_scrolling) == 0, "crt_no_scrolling = false");
     ok(unibi_get_bool(ut, unibi_no_correctly_working_cr) == 0, "no_correctly_working_cr = false");
     ok(unibi_get_bool(ut, unibi_gnu_has_meta_key) == 0, "gnu_has_meta_key = false");
     ok(unibi_get_bool(ut, unibi_linefeed_is_newline) == 0, "linefeed_is_newline = false");
+#ifndef USE_NETBSD_CURSES
+    // NetBSD curses does not recognize OT capabilities.
     ok(unibi_get_bool(ut, unibi_has_hardware_tabs) == 1, "has_hardware_tabs = true");
     unibi_set_bool(dt, unibi_has_hardware_tabs, 1);
+#endif
     ok(unibi_get_bool(ut, unibi_return_does_clr_eol) == 0, "return_does_clr_eol = false");
 
     note("numeric capabilities");
@@ -648,16 +664,69 @@ int main(void) {
     note("extended boolean capabilities");
     {
         const size_t n_ext = unibi_count_ext_bool(ut);
+#ifdef USE_NETBSD_CURSES
+        // NetBSD curses handle all canceled capability of extended table entries as boolean.
+        ok(n_ext == 14, "#ext_bool = 14");
+        ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
+        ok(0 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 0), "bs") == 0, "ext_bool[0].name = \"%s\"", "bs");
+        unibi_add_ext_bool(dt, "bs", 1);
+        ok(1 < n_ext && unibi_get_ext_bool(ut, 1) == 1, "ext_bool[1].value = 1");
+        ok(1 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 1), "pt") == 0, "ext_bool[1].name = \"%s\"", "pt");
+        unibi_add_ext_bool(dt, "pt", 1);
+        ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 1, "ext_bool[2].value = 1");
+        ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "AX") == 0, "ext_bool[2].name = \"%s\"", "AX");
+        unibi_add_ext_bool(dt, "AX", 1);
+        ok(3 < n_ext && unibi_get_ext_bool(ut, 3) == 1, "ext_bool[3].value = 1");
+        ok(3 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 3), "G0") == 0, "ext_bool[3].name = \"%s\"", "G0");
+        unibi_add_ext_bool(dt, "G0", 1);
+        ok(4 < n_ext && unibi_get_ext_bool(ut, 4) == 1, "ext_bool[4].value = 1");
+        ok(4 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 4), "E3") == 0, "ext_bool[4].name = \"%s\"", "E3");
+        unibi_add_ext_bool(dt, "E3", 1);
+        ok(5 < n_ext && unibi_get_ext_bool(ut, 5) == 1, "ext_bool[5].value = 1");
+        ok(5 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 5), "TS") == 0, "ext_bool[5].name = \"%s\"", "TS");
+        unibi_add_ext_bool(dt, "TS", 1);
+        ok(6 < n_ext && unibi_get_ext_bool(ut, 6) == 1, "ext_bool[6].value = 1");
+        ok(6 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 6), "XM") == 0, "ext_bool[2].name = \"%s\"", "XM");
+        unibi_add_ext_bool(dt, "XM", 1);
+        ok(7 < n_ext && unibi_get_ext_bool(ut, 7) == 1, "ext_bool[7].value = 1");
+        ok(7 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 7), "kEND5") == 0, "ext_bool[2].name = \"%s\"", "kEND5");
+        unibi_add_ext_bool(dt, "kEND5", 1);
+        ok(8 < n_ext && unibi_get_ext_bool(ut, 8) == 1, "ext_bool[8].value = 1");
+        ok(8 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 8), "kHOM5") == 0, "ext_bool[2].name = \"%s\"", "kHOM5");
+        unibi_add_ext_bool(dt, "kHOM5", 1);
+        ok(9 < n_ext && unibi_get_ext_bool(ut, 9) == 1, "ext_bool[9].value = 1");
+        ok(9 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 9), "ka2") == 0, "ext_bool[2].name = \"%s\"", "ka2");
+        unibi_add_ext_bool(dt, "ka2", 1);
+        ok(10 < n_ext && unibi_get_ext_bool(ut, 10) == 1, "ext_bool[10].value = 1");
+        ok(10 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 10), "kb1") == 0, "ext_bool[2].name = \"%s\"", "kb1");
+        unibi_add_ext_bool(dt, "kb1", 1);
+        ok(11 < n_ext && unibi_get_ext_bool(ut, 11) == 1, "ext_bool[11].value = 1");
+        ok(11 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 11), "kb3") == 0, "ext_bool[2].name = \"%s\"", "kb3");
+        unibi_add_ext_bool(dt, "kb3", 1);
+        ok(12 < n_ext && unibi_get_ext_bool(ut, 12) == 1, "ext_bool[12].value = 1");
+        ok(12 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 12), "kc2") == 0, "ext_bool[2].name = \"%s\"", "kc2");
+        unibi_add_ext_bool(dt, "kc2", 1);
+        ok(13 < n_ext && unibi_get_ext_bool(ut, 13) == 1, "ext_bool[13].value = 1");
+        ok(13 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 13), "xm") == 0, "ext_bool[2].name = \"%s\"", "xm");
+        unibi_add_ext_bool(dt, "xm", 1);
+#else
+#ifdef USE_HASHED_DB
+        ok(n_ext == 2, "#ext_bool = 2");
+#else
         ok(n_ext == 3, "#ext_bool = 3");
+#endif
         ok(0 < n_ext && unibi_get_ext_bool(ut, 0) == 1, "ext_bool[0].value = 1");
         ok(0 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 0), "AX") == 0, "ext_bool[0].name = \"%s\"", "AX");
         unibi_add_ext_bool(dt, "AX", 1);
         ok(1 < n_ext && unibi_get_ext_bool(ut, 1) == 1, "ext_bool[1].value = 1");
         ok(1 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 1), "G0") == 0, "ext_bool[1].name = \"%s\"", "G0");
         unibi_add_ext_bool(dt, "G0", 1);
+#ifndef USE_HASHED_DB
         ok(2 < n_ext && unibi_get_ext_bool(ut, 2) == 0, "ext_bool[2].value = 0");
         ok(2 < n_ext && strcmp(unibi_get_ext_bool_name(ut, 2), "XT") == 0, "ext_bool[2].name = \"%s\"", "XT");
         unibi_add_ext_bool(dt, "XT", 0);
+#endif
+#endif
     }
 
     note("extended numeric capabilities");
@@ -672,6 +741,15 @@ int main(void) {
     note("extended string capabilities");
     {
         const size_t n_ext = unibi_count_ext_str(ut);
+#ifdef USE_NETBSD_CURSES
+        ok(n_ext == 2, "#ext_str = 2");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033(B") == 0, "ext_str[0].value = \"%s\"", "\\033(B");
+        unibi_add_ext_str(dt, "E0", "\033(B");
+        ok(0 < n_ext && strcmp(unibi_get_ext_str_name(ut, 0), "E0") == 0, "ext_str[0].name = \"%s\"", "E0");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str(ut, 1), "\033(%p1%c") == 0, "ext_str[2].value = \"%s\"", "\\033(%p1%c");
+        unibi_add_ext_str(dt, "S0", "\033(%p1%c");
+        ok(1 < n_ext && strcmp(unibi_get_ext_str_name(ut, 1), "S0") == 0, "ext_str[2].name = \"%s\"", "S0");
+#else
         ok(n_ext == 12, "#ext_str = 12");
         ok(0 < n_ext && strcmp(unibi_get_ext_str(ut, 0), "\033(B") == 0, "ext_str[0].value = \"%s\"", "\\033(B");
         unibi_add_ext_str(dt, "E0", "\033(B");
@@ -709,6 +787,7 @@ int main(void) {
         ok(11 < n_ext && unibi_get_ext_str(ut, 11) == NULL, "ext_str[11].value = null");
         unibi_add_ext_str(dt, "xm", NULL);
         ok(11 < n_ext && strcmp(unibi_get_ext_str_name(ut, 11), "xm") == 0, "ext_str[11].name = \"%s\"", "xm");
+#endif
     }
 
     {
@@ -727,9 +806,12 @@ int main(void) {
     ok(1, "dummy object destroyed");
 
     return 0;
-#endif
 }
 
 static void setup(void) {
+#ifdef USE_HASHED_DB
+    plan(539);
+#else
     plan(541);
+#endif
 }
