@@ -60,7 +60,7 @@ ifeq ($(DEBUG),1)
   CFLAGS_DEBUG=-ggdb -DDEBUG -Og
 endif
 
-OBJECTS=unibilium.lo uninames.lo uniutil.lo
+OBJECTS=unibilium.lo uninames.lo uniutil.lo uninetbsd_curses.lo
 LIBRARY=libunibilium.la
 
 PODS=$(wildcard doc/*.pod)

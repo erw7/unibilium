@@ -92,136 +92,91 @@ unibi_term *unibi_from_fd(int fd) {
 
 #ifdef USE_HASHED_DB
 static DB * unibi_db_open(const char *path) {
-  DB *dbp = NULL;
+    DB *dbp = NULL;
 
 #if HASHED_DB_API >= 4
-  if (db_create(&dbp, NULL, 0) != 0
-      || dbp->open(dbp, NULL, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
-    dbp = NULL;
+    if (db_create(&dbp, NULL, 0) != 0
+            || dbp->open(dbp, NULL, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
+        dbp = NULL;
 #elif HASHED_DB_API >= 3
-  if (db_create(&dbp, NULL, 0) != 0
-      || dbp->open(dbp, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
-    dbp = NULL;
+    if (db_create(&dbp, NULL, 0) != 0
+            || dbp->open(dbp, path, NULL, DB_HASH, DB_RDONLY, 0644) != 0)
+        dbp = NULL;
 #elif HASHED_DB_API >= 2
-  if (db_open(path, DB_HASH, DB_RDONLY, 0644,
-              (DB_ENV *)NULL, (DB_INFO *)NULL, &dbp) != 0)
-    dbp = NULL;
+    if (db_open(path, DB_HASH, DB_RDONLY, 0644,
+                (DB_ENV *)NULL, (DB_INFO *)NULL, &dbp) != 0)
+        dbp = NULL;
 #else
-  dbp = dbopen(path, O_RDONLY, 0644, DB_HASH, NULL);
+    dbp = dbopen(path, O_RDONLY, 0644, DB_HASH, NULL);
 #endif
 
-  return dbp;
+    return dbp;
 }
 
 static void unibi_db_close(DB *dbp) {
 #if HASHED_DB_API >= 2
-  dbp->close(dbp, 0);
+    dbp->close(dbp, 0);
 #else
-  dbp->close(dbp);
+    dbp->close(dbp);
 #endif
 }
 
 static int unibi_db_get(DB *dbp, DBT *key, DBT *data) {
 #if HASHED_DB_API >= 2
-  return dbp->get(dbp, NULL, key, data, 0);
+    return dbp->get(dbp, NULL, key, data, 0);
 #else
-  return dbp->get(dbp, key, data, 0);
+    return dbp->get(dbp, key, data, 0);
 #endif
 }
 
 unibi_term *unibi_from_db(const char *file, const char *term) {
-  DB *dbp;
-  unibi_term *ut = NULL;
+    DB *dbp;
+    unibi_term *ut = NULL;
 
-  if (file == NULL || file[0] == '\0'|| term == NULL || term[0] == '\0') {
-    return ut;
-  }
-
-  if ((dbp = unibi_db_open(file)) != NULL) {
-    int reccnt = 0;
-    char *save = strdup(term);
-    DBT key = { 0 };
-    DBT data = { 0 };
-
-    key.data = save;
-    key.size = strlen(term);
-
-    while (unibi_db_get(dbp, &key, &data) == 0) {
-      char *buf = (char *)data.data;
-      int n = (int)data.size - 1;
-
-      if (*buf++ == 0) {
-        ut = unibi_from_mem(buf, n);
-        break;
-      }
-      if (++reccnt >= 3) {
-        break;
-      }
-      key.data = buf;
-      key.size = n;
+    if (file == NULL || file[0] == '\0'|| term == NULL || term[0] == '\0') {
+        errno = EINVAL;
+        return ut;
     }
 
-    free(save);
-    unibi_db_close(dbp);
-  }
+    if ((dbp = unibi_db_open(file)) != NULL) {
+        int reccnt, ret, err;
+        char *save = strdup(term);
+        DBT key = { 0 };
+        DBT data = { 0 };
 
-  return ut;
-}
-#else
-unibi_term *unibi_from_db(const char *file, const char *term) {
-    errno = ENOTSUP;
-    return NULL;
-}
-#endif
+        reccnt = 0;
+        key.data = save;
+        key.size = strlen(term);
 
-#ifdef USE_NETBSD_CURSES
-static struct cdbr *unibi_db_open(const char *path) {
-  return cdbr_open(path, CDBR_DEFAULT);
-}
+        while ((ret = unibi_db_get(dbp, &key, &data)) == 0) {
+            char *buf = (char *)data.data;
+            int n = (int)data.size - 1;
 
-static void unibi_db_close(struct cdbr *dbp) {
-  cdbr_close(dbp);
-}
-
-static int unibi_db_get(struct cdbr *dbp, uint32_t index,
-                        const void **data, size_t *len) {
-  return cdbr_get(dbp, index, data, len);
-}
-
-static int unibi_db_find(struct cdbr *dbp, const void *key, size_t keylen,
-                         const void **data, size_t *datalen) {
-  return cdbr_find(dbp, key, keylen, data, datalen);
-}
-
-unibi_term *unibi_from_nbc_db(const char *file, const char *term) {
-  struct cdbr *dbp;
-  unibi_term *ut = NULL;
-
-  if (file == NULL || file[0] == '\0'|| term == NULL || term[0] == '\0') {
-    return ut;
-  }
-
-  if ((dbp = unibi_db_open(file)) != NULL) {
-    char *data;
-    size_t datalen;
-    if (unibi_db_find(dbp, (void *)term, strlen(term) + 1,
-                  (void *)&data, &datalen) == 0) {
-      if (datalen != 0 && data[0] == 2) {
-        uint32_t idx = data[1] + (data[2] << 16);
-        if (unibi_db_get(dbp, idx, (void *)&data, &datalen) != 0) {
-          unibi_db_close(dbp);
-          return NULL;
+            if (*buf++ == 0) {
+                ut = unibi_from_mem(buf, n);
+                break;
+            }
+            if (++reccnt >= 3) {
+                errno = EMLINK;
+                break;
+            }
+            key.data = buf;
+            key.size = n;
         }
-      }
-      ut = unibi_from_nbc_mem(data, datalen);
-    }
-    unibi_db_close(dbp);
-  }
 
-  return ut;
+        if (ret == 1) {
+            errno = ENOENT;
+        }
+        err = errno;
+        free(save);
+        unibi_db_close(dbp);
+        errno = err;
+    }
+
+    return ut;
 }
 #else
-unibi_term *unibi_from_nbc_db(const char *file, const char *term) {
+unibi_term *unibi_from_db(const char *file, const char *term) {
     errno = ENOTSUP;
     return NULL;
 }

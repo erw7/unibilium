@@ -688,8 +688,13 @@ int main(void) {
     unibi_set_str(dt, unibi_scroll_forward, "\012");
     ok(strcmp(unibi_get_str(ut, unibi_scroll_reverse), "\033M") == 0, "scroll_reverse = \"%s\"", "\\033M");
     unibi_set_str(dt, unibi_scroll_reverse, "\033M");
+#ifdef USE_NETBSD_CURSES
     ok(strcmp(unibi_get_str(ut, unibi_set_attributes), "\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;") == 0, "set_attributes = \"%s\"", "\\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\\016%e\\017%;");
     unibi_set_str(dt, unibi_set_attributes, "\033[0%?%p6%t;1%;%?%p1%t;3%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;");
+#else
+    ok(strcmp(unibi_get_str(ut, unibi_set_attributes), "\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;") == 0, "set_attributes = \"%s\"", "\\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\\016%e\\017%;");
+    unibi_set_str(dt, unibi_set_attributes, "\033[0%?%p6%t;1%;%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;            5%;%?%p5%t;2%;m%?%p9%t\016%e\017%;");
+#endif
     ok(strcmp(unibi_get_str(ut, unibi_set_tab), "\033H") == 0, "set_tab = \"%s\"", "\\033H");
     unibi_set_str(dt, unibi_set_tab, "\033H");
     ok(unibi_get_str(ut, unibi_set_window) == NULL, "set_window = null");

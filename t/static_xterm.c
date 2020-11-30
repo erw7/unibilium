@@ -1037,8 +1037,13 @@ int main(void) {
     ok(unibi_get_str(ut, unibi_these_cause_cr) == NULL, "these_cause_cr = null");
     ok(unibi_get_str(ut, unibi_zero_motion) == NULL, "zero_motion = null");
     ok(unibi_get_str(ut, unibi_char_set_names) == NULL, "char_set_names = null");
+#ifdef USE_NETBSD_CURSES
     ok(strcmp(unibi_get_str(ut, unibi_key_mouse), "\033[M") == 0, "key_mouse = \"%s\"", "\\033[M");
     unibi_set_str(dt, unibi_key_mouse, "\033[M");
+#else
+    ok(strcmp(unibi_get_str(ut, unibi_key_mouse), "\033[<") == 0, "key_mouse = \"%s\"", "\\033[<");
+    unibi_set_str(dt, unibi_key_mouse, "\033[<");
+#endif
     ok(unibi_get_str(ut, unibi_mouse_info) == NULL, "mouse_info = null");
     ok(unibi_get_str(ut, unibi_req_mouse_pos) == NULL, "req_mouse_pos = null");
     ok(unibi_get_str(ut, unibi_get_mouse) == NULL, "get_mouse = null");
@@ -1598,6 +1603,6 @@ static void setup(void) {
 #ifdef USE_NETBSD_CURSES
     plan(637);
 #else
-    plan(665);
+    plan(667);
 #endif
 }
